@@ -1,11 +1,7 @@
-use axum::{
-    routing::get,
-    http::StatusCode,
-    Router,
-};
 use axum::response::IntoResponse;
+use axum::{http::StatusCode, routing::get, Router};
 
-#[cfg(feature="metrics")]
+#[cfg(feature = "metrics")]
 use axum_otel_metrics::HttpMetricsLayerBuilder;
 
 use crate::state::AppState;
@@ -25,7 +21,7 @@ pub fn app_router() -> Router<AppState> {
     router = router.fallback(handler_404);
 
     // add metrics
-    #[cfg(feature="metrics")]
+    #[cfg(feature = "metrics")]
     {
         let metrics = HttpMetricsLayerBuilder::new().build();
         router = router.merge(metrics.routes::<AppState>());
@@ -44,6 +40,6 @@ async fn ping() -> &'static str {
 async fn handler_404() -> impl IntoResponse {
     (
         StatusCode::NOT_FOUND,
-        "The requested resource could not be found."
+        "The requested resource could not be found.",
     )
 }

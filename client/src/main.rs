@@ -1,10 +1,7 @@
 mod prover;
 use clap::{Parser, Subcommand};
 use k256::{
-    ecdsa::{
-        signature::{Signer, Verifier},
-        Signature, SigningKey, VerifyingKey,
-    },
+    ecdsa::{signature::Signer, Signature, SigningKey, VerifyingKey},
     EncodedPoint,
 };
 use rand_core::OsRng;
@@ -73,7 +70,7 @@ fn main() {
             out_path,
             user_name,
         } => {
-            let signing_key = SigningKey::random(&mut OsRng); // Serialize with `::to_bytes()`
+            let signing_key = SigningKey::random(&mut OsRng);
             let public_key = signing_key.verifying_key();
             let out_path = out_path.join(user_name.unwrap_or("user".to_string()));
             fs::create_dir_all(&out_path).expect("");

@@ -1,10 +1,10 @@
-mod settings;
 mod routes;
+mod settings;
 mod state;
 mod verifier;
 
+use crate::settings::Settings;
 use lazy_static::lazy_static;
-use crate::{settings::Settings};
 
 // Globally accessible config
 lazy_static! {

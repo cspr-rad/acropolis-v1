@@ -1,8 +1,5 @@
 use k256::{
-    ecdsa::{
-        signature::{Signer, Verifier},
-        Signature, SigningKey, VerifyingKey,
-    },
+    ecdsa::{signature::Verifier, VerifyingKey},
     EncodedPoint,
 };
 use risc0_types::{CircuitInputs, CircuitOutputs};

@@ -1,10 +1,10 @@
+use crate::app::App;
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{BarChart, Block, List, ListItem, Paragraph, Borders},
+    widgets::{BarChart, Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use crate::app::App;
 
 /// Renders the user interface widgets.
 pub fn render(app: &mut App, frame: &mut Frame) {
@@ -16,7 +16,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .margin(1)
         .constraints(
             [
-                Constraint::Percentage(5), // Top section height
+                Constraint::Percentage(5),  // Top section height
                 Constraint::Percentage(95), // Bottom section height
             ]
             .as_ref(),
@@ -24,15 +24,16 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .split(size);
 
     // Render the welcome text
-    let welcome_text = Paragraph::new("Welcome to Acropolis! --- Press `Esc`, `Ctrl-C` or `q` to stop running.")
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Acropolis")
-                .title_alignment(Alignment::Center),
-        )
-        .style(Style::default().fg(Color::LightMagenta))
-        .alignment(Alignment::Center);
+    let welcome_text =
+        Paragraph::new("Welcome to Acropolis! --- Press `Esc`, `Ctrl-C` or `q` to stop running.")
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Acropolis")
+                    .title_alignment(Alignment::Center),
+            )
+            .style(Style::default().fg(Color::LightMagenta))
+            .alignment(Alignment::Center);
     frame.render_widget(welcome_text, chunks[0]);
 
     // Define the layout for the bottom section (list and bar chart side by side)
@@ -55,17 +56,11 @@ pub fn render(app: &mut App, frame: &mut Frame) {
     ];
 
     // Render the list
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("List"));
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("List"));
     frame.render_widget(list, bottom_chunks[0]);
 
     // Define data for the bar chart
-    let data = vec![
-        ("A", 10),
-        ("B", 20),
-        ("C", 30),
-        ("D", 40),
-    ];
+    let data = vec![("A", 10), ("B", 20), ("C", 30), ("D", 40)];
 
     // Render the bar chart
     let bar_chart = BarChart::default()

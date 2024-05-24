@@ -1,10 +1,10 @@
+use ratatui::backend::CrosstermBackend;
+use ratatui::Terminal;
+use std::io;
 use tui::app::{App, AppResult};
 use tui::event::{Event, EventHandler};
 use tui::handler::handle_key_events;
 use tui::tui::Tui;
-use std::io;
-use ratatui::backend::CrosstermBackend;
-use ratatui::Terminal;
 
 #[tokio::main]
 async fn main() -> AppResult<()> {

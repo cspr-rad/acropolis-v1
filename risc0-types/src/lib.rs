@@ -1,10 +1,4 @@
-use k256::{
-    ecdsa::{
-        signature::{Signer, Verifier},
-        Signature, SigningKey, VerifyingKey,
-    },
-    EncodedPoint, PublicKey,
-};
+use k256::ecdsa::Signature;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -16,7 +10,7 @@ pub struct CircuitInputs {
     pub public_identity: Signature,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct CircuitOutputs {
     pub choice: String,
     pub government_public_key: Vec<u8>,
