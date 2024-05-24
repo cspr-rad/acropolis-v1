@@ -15,6 +15,7 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-r0vm.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     fenix.url = "github:nix-community/fenix";
@@ -65,6 +66,9 @@
               libiconv
               darwin.apple_sdk.frameworks.SystemConfiguration
             ];
+            checkInpus = [
+              inputs'.nixpkgs-r0vm.legacyPackages.r0vm
+            ];
             cargoVendorDir = craneLib.vendorMultipleCargoDeps {
               inherit (craneLib.findCargoFiles src) cargoConfigs;
               cargoLockList = [
@@ -96,8 +100,8 @@
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
-            nativeBuildInputs = [
-              #pkgs.r0vm
+            packages = [
+              inputs'.nixpkgs-r0vm.legacyPackages.r0vm
             ];
           };
           packages = {
