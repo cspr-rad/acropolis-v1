@@ -3,7 +3,7 @@ use risc0_types::CircuitOutputs;
 use k256::{
     ecdsa::{signature::{Signer, Verifier}, Signature, SigningKey, VerifyingKey}, EncodedPoint
 };
-pub fn verify_receipt(receipt: Receipt, program_id: [u32;8]) -> CircuitOutputs{
+fn verify_receipt(receipt: Receipt, program_id: [u32;8]) -> CircuitOutputs{
     receipt.verify(program_id).expect("Failed to verify proof");
     receipt.journal.decode().expect("Failed to extract public journal from receipt")
 }
