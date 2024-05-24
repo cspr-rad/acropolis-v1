@@ -41,12 +41,7 @@ pub fn prove(
         .unwrap();
 
     let prover = default_prover();
-    println!("Proving");
-    let receipt = prover.prove(env, ACROPOLIS_ELF).unwrap();
-    println!("Verifying");
-    receipt.verify(ACROPOLIS_ID).unwrap();
-    println!("Done");
-    receipt
+    prover.prove(env, ACROPOLIS_ELF).unwrap()
 }
 
 #[test]
