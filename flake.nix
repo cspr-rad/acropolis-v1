@@ -66,7 +66,7 @@
               libiconv
               darwin.apple_sdk.frameworks.SystemConfiguration
             ];
-            checkInpus = [
+            checkInputs = [
               inputs'.nixpkgs-r0vm.legacyPackages.r0vm
             ];
             cargoVendorDir = craneLib.vendorMultipleCargoDeps {
@@ -89,6 +89,9 @@
           };
         in
         {
+          checks = {
+            inherit (self'.packages) acropolis;
+          };
           treefmt = {
             projectRootFile = ".git/config";
             programs.nixpkgs-fmt.enable = true;
