@@ -1,6 +1,4 @@
-
 use risc0_zkvm::guest::env;
-
 
 fn main() {
     // TODO: Implement your guest code here
