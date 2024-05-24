@@ -9,3 +9,12 @@ opt-level = 3
 [profile.release]
 debug = 1
 lto = true
+
+[workspace.package]
+name = "acropolis"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[workspace.metadata.crane]
+name = "acropolis"
