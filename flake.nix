@@ -92,12 +92,12 @@
             programs.rustfmt.package = craneLib.rustfmt;
             settings.formatter = { };
           };
-          devShells.defaults = pkgs.mkShell {
+          devShells.default = pkgs.mkShell {
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
             nativeBuildInputs = [
-              pkgs.r0vm
+              #pkgs.r0vm
             ];
           };
           packages = {
