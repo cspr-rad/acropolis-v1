@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 pub struct CircuitInputs {
     pub choice: String,
     pub user_public_key: Vec<u8>,
-    pub user_secret_key: Vec<u8>,
+    pub session_signature: Vec<u8>,
     pub government_public_key: Vec<u8>,
     pub public_identity: Vec<u8>,
 }

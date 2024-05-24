@@ -400,9 +400,10 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "client"
 version = "0.1.0"
 dependencies = [
- "k256",
+ "k256 0.13.3 (git+https://github.com/risc0/RustCrypto-elliptic-curves)",
  "methods",
  "rand_core",
+ "risc0-types",
  "risc0-zkvm",
  "serde",
  "tracing-subscriber 0.3.18",
@@ -891,6 +892,19 @@ name = "k256"
 version = "0.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "956ff9b67e26e1a6a866cb758f12c6f8746208489e3e4a4b5580802f2f0a587b"
+dependencies = [
+ "cfg-if",
+ "ecdsa",
+ "elliptic-curve",
+ "once_cell",
+ "sha2",
+ "signature",
+]
+
+[[package]]
+name = "k256"
+version = "0.13.3"
+source = "git+https://github.com/risc0/RustCrypto-elliptic-curves#d4f457a04410397cbb652a67c168b6cd6e9757c4"
 dependencies = [
  "cfg-if",
  "ecdsa",
@@ -1417,6 +1431,14 @@ dependencies = [
  "num-derive",
  "num-traits",
  "risc0-zkp",
+ "serde",
+]
+
+[[package]]
+name = "risc0-types"
+version = "0.1.0"
+dependencies = [
+ "k256 0.13.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
 ]
 
