@@ -1,6 +1,7 @@
 mod settings;
 mod routes;
 mod state;
+mod verifier;
 
 use lazy_static::lazy_static;
 use crate::{settings::Settings};

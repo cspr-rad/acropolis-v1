@@ -58,6 +58,8 @@ dependencies = [
  "config",
  "dotenvy",
  "lazy_static",
+ "risc0-types",
+ "risc0-zkvm",
  "serde",
  "tokio",
  "tracing",
