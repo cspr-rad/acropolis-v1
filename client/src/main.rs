@@ -109,10 +109,4 @@ fn main() {
             .expect("");
         }
     }
-    // Decode the verifying key, message, and signature from the inputs.
-    //let signing_key = SigningKey::random(&mut OsRng); // Serialize with `::to_bytes()`
-    //let message = b"This is a message that will be signed, and verified within the zkVM";
-    //let signature: Signature = signing_key.sign(message);
-    //let encoded_verifying_key = signing_key.verifying_key().to_encoded_point(true);
-    //let verifying_key = VerifyingKey::from_encoded_point(&encoded_verifying_key).unwrap();
 }
