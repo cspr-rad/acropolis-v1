@@ -4,3 +4,5 @@ target/
 .envrc
 .direnv
 result
+api-config.toml
+.env
