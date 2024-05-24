@@ -1,37 +1,31 @@
-// struct Vote {
-//     proof: todo!("proof type"),
-//     gov_key: todo!("public key of gov")
-// }
+use k256::{
+    ecdsa::{signature::{Signer, Verifier}, Signature, SigningKey, VerifyingKey}, EncodedPoint
+};
+use risc0_zkvm::Receipt;
 
-// struct Election {
-//     gov_key: todo!("public key of gov"),
-//     gov_sigs: Vec<todo!("sigs")>,
-//     options: Vec<String>,
-//     votes: Vec<Vote>,
-// }
+#[derive(Default, Clone)]
+struct MockBlockChainState{
+    elections: Vec<Election>
+}
 
-// #[derive(Clone)]
-// pub struct AppState {
-//     elections: Vec<Election>
-// }
-
-// impl AppState {
-//     pub fn new() -> Self {
-//         AppState {
-//             data: Vec::new()
-//         }
-//     }
-// }
+#[derive(Clone)]
+struct Election {
+    gov_key: VerifyingKey,
+    gov_sigs: Vec<Signature>,
+    options: Vec<String>,
+    // receipt journal contains all info about the vote e.g. option, government identity, ...
+    receipts: Vec<Receipt>, 
+}
 
 #[derive(Clone)]
 pub struct AppState {
-    data: Vec<i8>
+    state: MockBlockChainState
 }
 
 impl AppState {
     pub fn new() -> Self {
         AppState {
-            data: Vec::new()
+            state: MockBlockChainState::default()
         }
     }
 }
