@@ -57,6 +57,7 @@ dependencies = [
  "axum",
  "config",
  "dotenvy",
+ "k256",
  "lazy_static",
  "risc0-types",
  "risc0-zkvm",
