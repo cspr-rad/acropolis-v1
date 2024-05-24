@@ -20,5 +20,7 @@ risc0-types = {path="../risc0-types"}
 risc0-zkvm = {version="0.21", default-features=false}
 k256 = {git="https://github.com/risc0/RustCrypto-elliptic-curves", features=["serde"]}
 
-[dev-dependencies]
-rusty-hook = "^0.11.2"
+[dev-dependencies.cargo-husky]
+version = "1"
+default-features = false # Disable features which are enabled by default
+features = ["precommit-hook", "run-cargo-fmt", "run-for-all"]
