@@ -4,8 +4,28 @@ use methods::{
     ACROPOLIS_ELF, ACROPOLIS_ID
 };
 use risc0_zkvm::{default_prover, ExecutorEnv};
+use rand_core::OsRng;
+use k256::{
+    ecdsa::{signature::Verifier, signature::Signer, Signature, VerifyingKey, SigningKey},
+    EncodedPoint,
+};
 
 fn main() {
+
+    // Decode the verifying key, message, and signature from the inputs.
+    let signing_key = SigningKey::random(&mut OsRng); // Serialize with `::to_bytes()`
+    let message = b"This is a message that will be signed, and verified within the zkVM";
+    let signature: Signature = signing_key.sign(message);
+    let encoded_verifying_key = signing_key.verifying_key().to_encoded_point(true);
+    let verifying_key = VerifyingKey::from_encoded_point(&encoded_verifying_key).unwrap();
+
+    // Verify the signature, panicking if verification fails.
+    verifying_key
+        .verify(message, &signature)
+        .expect("ECDSA signature verification failed");
+
+
+    /*
     // Initialize tracing. In order to view logs, run `RUST_LOG=info cargo run`
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
@@ -53,4 +73,5 @@ fn main() {
     receipt
         .verify(ACROPOLIS_ID)
         .unwrap();
+    */
 }
