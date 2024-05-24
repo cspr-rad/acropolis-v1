@@ -1,0 +1,8 @@
+[package]
+name = "risc0-types"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+k256 = "0.13.3"
+serde = {version="1", default-features=false, features=["derive"]}
