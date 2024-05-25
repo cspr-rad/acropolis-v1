@@ -9,7 +9,8 @@ pub fn app_router() -> Router<StateType> {
     // Add default endpoints
     router = router
         .route("/ping", get(ping))
-        .route("/submit_receipt", post(submit_receipt));
+        .route("/submit_receipt", post(submit_receipt))
+        .route("/fetch_elections", get(fetch_elections));
     // add 404 error handler
     router = router.fallback(handler_404);
     router
