@@ -32,7 +32,7 @@ pub enum Command {
     },
     IssueIdentity {
         #[arg(short, long)]
-        issuer_skey_path: PathBuf,
+        issuer_id_path: PathBuf,
         #[arg(short, long)]
         user_pkey_path: PathBuf,
     },
@@ -90,15 +90,21 @@ pub fn run(cli: Cli) {
             .expect("");
         }
         Command::IssueIdentity {
-            issuer_skey_path,
+            issuer_id_path,
             user_pkey_path,
         } => {
             let issuer_skey =
-                SigningKey::from_slice(&fs::read(issuer_skey_path).expect("")).expect("");
+                SigningKey::from_slice(&fs::read(issuer_id_path.join("secret_key")).expect("")).expect("");
+
+            let mut payload = fs::read(&user_pkey_path).expect("");
+            payload.append(&mut fs::read(issuer_id_path.join("public_key")).expect(""));
+
             let public_identity: Signature =
-                issuer_skey.sign(&fs::read(&user_pkey_path).expect(""));
+                issuer_skey.sign(&payload);
+
             let mut public_identity_out_path = user_pkey_path.clone();
             public_identity_out_path.set_file_name("public_identity");
+
             let verified_user = VerifiedUser {
                 government_public_key: issuer_skey
                     .verifying_key()
@@ -107,6 +113,7 @@ pub fn run(cli: Cli) {
                     .to_vec(),
                 public_identity: public_identity.to_bytes().to_vec(),
             };
+            
             fs::write(
                 public_identity_out_path,
                 serde_json::to_string(&verified_user).expect(""),
