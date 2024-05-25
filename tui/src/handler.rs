@@ -14,14 +14,8 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
                 app.quit();
             }
         }
-        // Counter handlers
-        KeyCode::Right => {
-            app.increment_counter();
-        }
-        KeyCode::Left => {
-            app.decrement_counter();
-        }
-        // Other handlers you could add here.
+        KeyCode::Down => app.next(),
+        KeyCode::Up => app.previous(),
         _ => {}
     }
     Ok(())

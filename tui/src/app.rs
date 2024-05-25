@@ -1,30 +1,30 @@
+use ratatui::widgets::ListState;
 use std::error;
 
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
 
-/// Application.
-#[derive(Debug)]
 pub struct App {
-    /// Is the application running?
+    pub error: Option<String>,
     pub running: bool,
-    /// counter
-    pub counter: u8,
-}
-
-impl Default for App {
-    fn default() -> Self {
-        Self {
-            running: true,
-            counter: 0,
-        }
-    }
+    pub items: Vec<String>,
+    pub list_state: ListState,
 }
 
 impl App {
-    /// Constructs a new instance of [`App`].
     pub fn new() -> Self {
-        Self::default()
+        let mut list_state = ListState::default();
+        list_state.select(Some(0));
+        Self {
+            error: None,
+            running: true,
+            items: vec![
+                "Item 1".to_string(),
+                "Item 2".to_string(),
+                "Item 3".to_string(),
+            ],
+            list_state,
+        }
     }
 
     /// Handles the tick event of the terminal.
@@ -35,15 +35,31 @@ impl App {
         self.running = false;
     }
 
-    pub fn increment_counter(&mut self) {
-        if let Some(res) = self.counter.checked_add(1) {
-            self.counter = res;
-        }
+    pub fn next(&mut self) {
+        let i = match self.list_state.selected() {
+            Some(i) => {
+                if i >= self.items.len() - 1 {
+                    0
+                } else {
+                    i + 1
+                }
+            }
+            None => 0,
+        };
+        self.list_state.select(Some(i));
     }
 
-    pub fn decrement_counter(&mut self) {
-        if let Some(res) = self.counter.checked_sub(1) {
-            self.counter = res;
-        }
+    pub fn previous(&mut self) {
+        let i = match self.list_state.selected() {
+            Some(i) => {
+                if i == 0 {
+                    self.items.len() - 1
+                } else {
+                    i - 1
+                }
+            }
+            None => 0,
+        };
+        self.list_state.select(Some(i));
     }
 }

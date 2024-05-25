@@ -1,34 +1,29 @@
+use crate::{state::StateType, verifier::Receipt};
 use axum::response::IntoResponse;
-use axum::{http::StatusCode, routing::get, Router};
-
-#[cfg(feature = "metrics")]
-use axum_otel_metrics::HttpMetricsLayerBuilder;
-
-use crate::state::AppState;
-
-// import API endpoints for delta tree if building for delta-tree
-// #[cfg(feature="delta-tree")]
-// use crate::handlers::delta_tree::{};
+use axum::{extract::State, http::StatusCode, routing::get, routing::post, Json, Router};
 
 // Router configuring all accessible API endpoints
-pub fn app_router() -> Router<AppState> {
+pub fn app_router() -> Router<StateType> {
     let mut router = Router::new();
 
     // Add default endpoints
-    router = router.route("/ping", get(ping));
+    router = router
+        .route("/ping", get(ping))
+        .route("/submit_receipt", post(submit_receipt));
 
     // add 404 error handler
     router = router.fallback(handler_404);
 
-    // add metrics
-    #[cfg(feature = "metrics")]
-    {
-        let metrics = HttpMetricsLayerBuilder::new().build();
-        router = router.merge(metrics.routes::<AppState>());
-        router = router.layer(metrics);
-    }
-
     router
+}
+
+async fn submit_receipt(
+    State(state): State<StateType>,
+    Json(body): Json<Receipt>,
+) -> impl IntoResponse {
+    let mut state = state.lock().unwrap();
+    state.process_receipt(body);
+    (StatusCode::OK, "Receipt received")
 }
 
 // Ping endpoint for debugging - TODO return DateTime of API server

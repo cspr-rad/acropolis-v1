@@ -3076,6 +3076,7 @@ dependencies = [
  "crossterm",
  "futures",
  "ratatui",
+ "reqwest 0.12.4",
  "tokio",
 ]
 

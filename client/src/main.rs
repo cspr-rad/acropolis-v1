@@ -5,11 +5,11 @@ use k256::{
     EncodedPoint,
 };
 use rand_core::OsRng;
+use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs;
 use std::path::PathBuf;
-use reqwest::blocking::Client;
 
 #[derive(Parser)]
 pub struct Cli {
@@ -68,7 +68,11 @@ fn main() {
                 &public_identity,
             );
             let client: Client = Client::new();
-            let response = client.post("http://127.0.0.1:8080/submit_receipt").json(&receipt).send().expect("Failed to submit proof to server");
+            let response = client
+                .post("http://127.0.0.1:8080/submit_receipt")
+                .json(&receipt)
+                .send()
+                .expect("Failed to submit proof to server");
             assert!(response.status().is_success());
         }
 
