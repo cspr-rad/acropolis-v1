@@ -100,3 +100,6 @@ To query all votes (+ ZK proofs) of an election that have been verified by the A
 ```bash
 http://127.0.0.1:8080/fetch_votes/<election_hex>
 ```
+## Additional Contributions
+
+We hopefully improved the developer experience by submitting a PR that packages kurtosis with Nix: https://github.com/kurtosis-tech/kurtosis/pull/2461

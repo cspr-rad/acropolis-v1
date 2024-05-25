@@ -22,6 +22,8 @@
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     crane.url = "github:ipetkov/crane";
     crane.inputs.nixpkgs.follows = "nixpkgs";
+    kurtosis.url = "github:marijanp/kurtosis/nixify";
+    kurtosis.inputs.unstable.follows = "nixpkgs";
   };
 
   outputs = inputs@{ flake-parts, treefmt-nix, ... }:
@@ -105,6 +107,8 @@
             inputsFrom = [ self'.packages.acropolis ];
             packages = [
               inputs'.nixpkgs-r0vm.legacyPackages.r0vm
+              pkgs.nodejs
+              inputs'.kurtosis.packages.kurtosis
             ];
           };
           packages = {
