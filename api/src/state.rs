@@ -5,6 +5,7 @@ use k256::{
     },
     EncodedPoint,
 };
+use std::collections::HashSet;
 use risc0_types::CircuitOutputs;
 use risc0_zkvm::Receipt;
 
@@ -18,12 +19,13 @@ pub struct Election {
     pub gov_key: VerifyingKey,
     pub gov_sigs: Vec<Signature>,
     pub options: Vec<String>,
-    // receipt journal contains all info about the vote e.g. option, government identity, ...
-    // we want to store this so that an external observer can verify all proofs independently
-    pub receipts: Vec<Receipt>,
+    // take the public_identity from the CircuitOutputs and insert <public_identity, receipt> into this HashSet
+    // every key in the HashSet will be unique => every public identity can only vote once.
+    pub receipts: HashSet<Signature, Receipt>,
     // this is where we store votes that have been verified
     // their government_public_key should match the gov_key of this Election
-    pub receipt_journals_decoded: Vec<CircuitOutputs>,
+    // this is what will be returned to the front-end.
+    pub receipt_journals_decoded: HashSet<Signature, CircuitOutputs>,
 }
 
 #[derive(Clone)]
