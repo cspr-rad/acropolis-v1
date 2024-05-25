@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use k256::{ecdsa::{signature::Signer, Signature, SigningKey, VerifyingKey}, EncodedPoint};
+use k256::{ecdsa::{Signature, VerifyingKey}, EncodedPoint};
 
 #[derive(Serialize, Deserialize)]
 pub struct CircuitInputs {

@@ -1,7 +1,6 @@
-use crate::state::MockBlockChainState;
 use methods::ACROPOLIS_ID;
 use risc0_types::CircuitOutputs;
-use risc0_zkvm::Receipt;
+pub use risc0_zkvm::Receipt;
 
 pub fn verify_receipt(receipt: Receipt) -> CircuitOutputs {
     receipt
