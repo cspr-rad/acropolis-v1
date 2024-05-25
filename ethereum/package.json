@@ -1,0 +1,16 @@
+{
+  "name": "acropolis-ethereum",
+  "version": "1.0.0",
+  "description": "Ethereum local test-net integration for Acropolis",
+  "main": "index.js",
+  "author": "Matthew Doty <matt@w-d.org>",
+  "license": "ISC",
+  "scripts": {
+    "start": "./scripts/start_testnet.sh",
+    "stop": "kurtosis clean -a"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.4"
+  }
+}
