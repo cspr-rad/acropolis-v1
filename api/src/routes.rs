@@ -1,6 +1,6 @@
+use crate::{state::StateType, verifier::Receipt};
 use axum::response::IntoResponse;
-use axum::{Json, extract::State, http::StatusCode, routing::get, routing::post, Router};
-use crate::{verifier::Receipt, state::StateType};
+use axum::{extract::State, http::StatusCode, routing::get, routing::post, Json, Router};
 
 // import API endpoints for delta tree if building for delta-tree
 // #[cfg(feature="delta-tree")]
@@ -11,8 +11,9 @@ pub fn app_router() -> Router<StateType> {
     let mut router = Router::new();
 
     // Add default endpoints
-    router = router.route("/ping", get(ping))
-                .route("/submit_receipt", post(submit_receipt));
+    router = router
+        .route("/ping", get(ping))
+        .route("/submit_receipt", post(submit_receipt));
 
     // add 404 error handler
     router = router.fallback(handler_404);
@@ -29,7 +30,6 @@ async fn submit_receipt(
     // (StatusCode::OK, Json(result))
     (StatusCode::OK, "Transfer received")
 }
-
 
 // Ping endpoint for debugging - TODO return DateTime of API server
 async fn ping() -> &'static str {

@@ -1,9 +1,9 @@
+use crate::verifier;
 use k256::ecdsa::{Signature, VerifyingKey};
-use std::collections::HashMap;
 use risc0_types::CircuitOutputs;
 use risc0_zkvm::Receipt;
+use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use crate::verifier;
 
 pub type StateType = Arc<Mutex<AppState>>;
 
@@ -46,10 +46,14 @@ impl AppState {
 
     pub fn process_receipt(&mut self, receipt: crate::verifier::Receipt) {
         let outputs: CircuitOutputs = verifier::verify_receipt(receipt.clone());
-        for election in &mut self.state.elections{
-            if election.gov_key == outputs.deserialized_government_public_key(){
-                election.receipts.insert(outputs.public_identity.to_bytes().to_vec(), receipt.clone());
-                election.receipt_journals_decoded.insert(outputs.public_identity.to_bytes().to_vec(), outputs.clone());
+        for election in &mut self.state.elections {
+            if election.gov_key == outputs.deserialized_government_public_key() {
+                election
+                    .receipts
+                    .insert(outputs.public_identity.to_bytes().to_vec(), receipt.clone());
+                election
+                    .receipt_journals_decoded
+                    .insert(outputs.public_identity.to_bytes().to_vec(), outputs.clone());
             }
         }
     }
