@@ -7,7 +7,6 @@ use k256::{
 use rand_core::OsRng;
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
-use serde_json;
 use std::fs;
 use std::path::PathBuf;
 
