@@ -119,7 +119,6 @@ fn optimize_groth16_proof() {
         &signing_key,
         government_signing_key.verifying_key(),
         &public_identity,
-        None,
     );
     let optimized_receipt = prove_groth16(&receipt);
     println!(
