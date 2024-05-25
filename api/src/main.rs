@@ -4,7 +4,9 @@ mod state;
 mod verifier;
 
 use crate::settings::Settings;
+use k256::ecdsa::{SigningKey, VerifyingKey};
 use lazy_static::lazy_static;
+use state::{Election, MockBlockChainState};
 
 // Globally accessible config
 lazy_static! {
@@ -14,11 +16,8 @@ lazy_static! {
 #[tokio::main]
 async fn main() {
     CONFIG.initialize_logger();
-
     let app = crate::routes::app_router().with_state(crate::state::AppState::new());
-
     let axum_addr = CONFIG.socket_address();
-
     tracing::info!("Starting HTTP server on `{}`", axum_addr);
     let listener = tokio::net::TcpListener::bind(axum_addr).await.unwrap();
     axum::serve(listener, app)
@@ -45,4 +44,18 @@ async fn shutdown_signal() {
         _ = ctrl_c => {tracing::info!("Received CTRL+C signal, shutting down...")},
         _ = terminate => {tracing::info!("Received shutdown signal, shutting down...")},
     }
+}
+
+#[test]
+fn setup_elections_state() {
+    use serde::{Deserialize, Serialize};
+    use std::process::Command;
+    #[derive(Serialize, Deserialize)]
+    struct VerifiedUser {
+        government_public_key: Vec<u8>,
+        public_identity: Vec<u8>,
+    }
+    use std::fs;
+    let mut state: MockBlockChainState = MockBlockChainState::default();
+    let resources_path: std::path::PathBuf = CONFIG.server.resources_path.clone();
 }
