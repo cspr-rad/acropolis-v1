@@ -54,3 +54,28 @@ The heart of this cryptographic protocol is the Risc0 circuit that takes the aut
     };
     env::commit(&output);
 ```
+
+## The Client
+The Client can be used to issue identities, generate keypairs and submit votes. 
+```bash
+cargo run -p acropolis
+```
+
+```
+Usage: acropolis <COMMAND>
+
+Commands:
+  vote               
+  generate-key-pair  
+  issue-identity     
+  help               Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+
+The Client crate has a `groth16` feature that indicates whether to submit a proof to the api and ethereum, or just the api.
+Risc0-groth16 currently only supports x86 architecture and therefore this feature may not be enabled when running unsupported architecture.
+
+## Auditing the API
+Our API serves all `Elections` and their `Votes`. An external entity can utilize the functionality exposed by our `audit-utils` crate to verify all ZKPs (=votes) independently.
