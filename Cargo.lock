@@ -353,7 +353,9 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "hex",
+ "k256",
  "methods",
+ "risc0-types",
  "risc0-zkvm",
  "serde",
 ]

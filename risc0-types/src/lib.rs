@@ -4,7 +4,7 @@ use k256::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CircuitInputs {
     pub choice: String,
     pub user_public_key: Vec<u8>,
@@ -13,7 +13,7 @@ pub struct CircuitInputs {
     pub public_identity: Signature,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct CircuitOutputs {
     pub choice: String,
     pub government_public_key: Vec<u8>,
