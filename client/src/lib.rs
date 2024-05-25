@@ -39,9 +39,9 @@ pub enum Command {
 }
 
 #[derive(Serialize, Deserialize)]
-struct VerifiedUser {
-    government_public_key: Vec<u8>,
-    public_identity: Vec<u8>,
+pub struct VerifiedUser {
+    pub government_public_key: Vec<u8>,
+    pub public_identity: Vec<u8>,
 }
 
 pub fn run(cli: Cli) {

@@ -6,3 +6,4 @@ target/
 result
 api-config.toml
 .env
+election-*
