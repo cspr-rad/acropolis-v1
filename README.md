@@ -1,24 +1,34 @@
 # Acropolis - a ZKVM enabled voting mechanism
 
 ## Authorized Anonymous Voting
-Acropolis enables anonymous voting through `Signatures` over `Public Keys`. The cryptographic identity of each user is treated as a secret input and never revealed to the public. Only the `Signature` issued by the autorities for a "KYC-ed" user, alongside with the corresponding `Public Key` (one `Public Key` per election that is owned by the authority) are published for each election. An election is defined as a cycle with a fixed set of options to choose from and government issued identities (=`Signatures` over `Public Keys`).
 
-From this point onward the term `authority` will be used interchangably with `government` for the sake of simplicity. It is however not important what centralized or decentralized entity issues the identities (`Signatures`). In the context of an election the authority could be the government.
+Acropolis enables anonymous voting through `Signatures` over `Public Keys`. The cryptographic identity of each user is treated as a secret input and never revealed to the public. Only the `Signature` issued by an authority for a "KYC-ed" user, alongside with the corresponding `Public Key` (one `Public Key` per election that is owned by the authority) are published for each election. An election is defined as a cycle with a fixed set of options to choose from and authorized identities (=`Signatures` over `Public Keys`).
 
-The primary identifier of an election is the government issued `Public Key` that is unique for each election. The payload that is signed by the government is the `Public Key` of the authorized voter concatenated with the government `Public Key` (which acts as salt to prevent reverse,- and social engineering). 
+The primary identifier of an election is an authorized `Public Key`, that is unique for each election. The payload that is signed by the authority is the `Public Key` of the authorized voter concatenated with the election `Public Key` (which acts as salt). 
 
-`Each authorized user may only vote once per election and currently the weight of all votes is 1.`
+_Each authorized user may only vote once per election._
 
-An eligible user may submit a vote for an election by generating a proof where the public inputs are their government issued identity, alongside with a `Signature` over the government `Public Key` associated with that election.
+An eligible user may submit a vote for an election by generating a zero-knowledge proof where the public inputs are:
 
-## How it works exactly
+ - The `Public Key` associated with the election
+ - The signed and salted user's public key
+ - The user's vote selection (a string)
+
+The private inputs to the zero-knowledge proof are:
+
+ - A signature of the user's vote selection
+
+## How It Works Exactly
+
 We utilize a Risc0 guest program (circuit) to prove that a user possesses a `Private Key` with a corresponding `Public Key` that has been signed by an authority.
-The user must sign the government issued `Public Key` (remember, one `Public Key` is issued per election) and the circuit will verify that "session `Signature`", as well as the government issued identity (which is also a `Signature`).
+The user must sign the vote selection and the circuit will verify that "session `Signature`", as well as the government issued identity (which is also a `Signature`).
 
 Therefore the workload that's handled inside the ZKVM is the verification of 2 `Signatures` for each proof of identity. The only information that is revealed is that a user possess a `Private Key` that corresponds to a `Public Key` that has been signed by the authority. The cryptographic identity of the user is not revealed to the public.
 
 ## The Risc0 circuit
+
 The heart of this cryptographic protocol is the Risc0 circuit that takes the autorized `Public Key` as a secret input and the government issued identity (`Signature`) as a public input.
+
 ```rust
     let circuit_inputs: CircuitInputs = env::read();
     let choice: String = circuit_inputs.choice;
@@ -56,7 +66,9 @@ The heart of this cryptographic protocol is the Risc0 circuit that takes the aut
 ```
 
 ## The Client
-The Client can be used to issue identities, generate keypairs and submit votes. 
+
+The Client can be used to issue identities, generate keypairs and submit votes.
+
 ```bash
 cargo run -p acropolis
 ```
