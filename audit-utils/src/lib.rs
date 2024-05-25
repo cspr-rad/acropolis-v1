@@ -9,7 +9,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
-pub fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
+fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
     let file = File::open(path).expect("Failed to read receipts file");
     let reader = BufReader::new(file);
     let mut result: Vec<Receipt> = Vec::new();
@@ -29,11 +29,7 @@ pub fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
     result
 }
 
-pub fn serialize_receipt(receipt: Receipt) -> Vec<u8> {
-    bincode::serialize(&receipt).expect("Failed to serialize receipt")
-}
-
-pub fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMap<String, u64> {
+fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMap<String, u64> {
     let mut identities: Vec<Signature> = Vec::new();
     let mut malicious_identities: Vec<Signature> = Vec::new();
     let mut valid_votes: Vec<CircuitOutputs> = Vec::new();
@@ -79,4 +75,9 @@ pub fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMa
         println!("Candidate {:?} has received {:?} votes", result.0, result.1)
     }
     votes
+}
+
+pub fn audit_data(path: PathBuf, gov_pub_key: String) {
+    let receipts = parse_receipts_file(path);
+    verify_receipt_vec(receipts, gov_pub_key);
 }

@@ -6,6 +6,7 @@ version = 3
 name = "acropolis"
 version = "0.1.0"
 dependencies = [
+ "audit-utils",
  "clap",
  "elliptic-curve",
  "k256",

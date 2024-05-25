@@ -1,4 +1,5 @@
 mod prover;
+use audit_utils::audit_data;
 use clap::{Parser, Subcommand};
 use k256::{
     ecdsa::{signature::Signer, Signature, SigningKey, VerifyingKey},
@@ -35,6 +36,12 @@ pub enum Command {
         issuer_id_path: PathBuf,
         #[arg(short, long)]
         user_pkey_path: PathBuf,
+    },
+    Audit {
+        #[arg(short, long)]
+        audit_file_path: PathBuf,
+        #[arg(short, long)]
+        gov_key_hex: String,
     },
 }
 
@@ -130,6 +137,13 @@ pub fn run(cli: Cli) {
                 serde_json::to_string(&verified_user).expect(""),
             )
             .expect("");
+        }
+
+        Command::Audit {
+            audit_file_path,
+            gov_key_hex,
+        } => {
+            audit_data(audit_file_path, gov_key_hex);
         }
     }
 }
