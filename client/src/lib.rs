@@ -100,7 +100,6 @@ pub fn run(cli: Cli) {
                 &user_secret_key,
                 &government_public_key,
                 &public_identity,
-                None,
             );
 
             if let Some(receipt_out_path) = receipt_out_path {
