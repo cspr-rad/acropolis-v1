@@ -50,13 +50,6 @@ pub enum Command {
         #[arg(short, long)]
         gov_key_hex: String,
     },
-    #[cfg(feature = "groth16")]
-    Groth16Proof {
-        #[arg(short, long)]
-        receipt_path: PathBuf,
-        #[arg(short, long)]
-        out_path: PathBuf,
-    },
     ExtractElectionId {
         #[arg(short, long)]
         receipt_path: PathBuf,
