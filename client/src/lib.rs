@@ -51,6 +51,7 @@ pub enum Command {
     Groth16Proof {
         #[arg(short, long)]
         receipt_path: PathBuf,
+        #[arg(short, long)]
         out_path: PathBuf,
     },
     ExtractElectionId {
