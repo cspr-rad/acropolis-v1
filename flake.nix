@@ -52,6 +52,14 @@
             '';
           };
 
+          # see https://github.com/risc0/risc0/blob/v0.21.0/risc0/circuit/recursion/build.rs
+          sha256Hash = "3504a2542626acb974dea1ae5542c90c032c4ef42f230977f40f245442a1ec23";
+          recursionZkr = pkgs.fetchurl {
+            name = "recursion_zkr.zip";
+            url = "https://risc0-artifacts.s3.us-west-2.amazonaws.com/zkr/${sha256Hash}.zip";
+            sha256 = "sha256:08zcl515890gyivhj8rgyi72q0qcr515bbm1vrsbkb164raa411m";
+          };
+
           acropolisAttrs = rec {
             src = lib.cleanSourceWith {
               src = craneLib.path ./.;
@@ -83,16 +91,6 @@
               ];
             };
             preBuild =
-              let
-                # see https://github.com/risc0/risc0/blob/v0.21.0/risc0/circuit/recursion/build.rs
-                sha256Hash = "3504a2542626acb974dea1ae5542c90c032c4ef42f230977f40f245442a1ec23";
-                recursionZkr = pkgs.fetchurl {
-                  name = "recursion_zkr.zip";
-                  url = "https://risc0-artifacts.s3.us-west-2.amazonaws.com/zkr/${sha256Hash}.zip";
-                  sha256 = "sha256:08zcl515890gyivhj8rgyi72q0qcr515bbm1vrsbkb164raa411m";
-                };
-              in
-
               ''
                 # The vendored cargo sources will be placed into .cargo-home,
                 # however it seems that since the risc0_build crate
@@ -117,6 +115,7 @@
             settings.formatter = { };
           };
           devShells.default = pkgs.mkShell {
+            RECURSION_SRC_PATH=recursionZkr;
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
