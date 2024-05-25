@@ -14,3 +14,4 @@ serde_json = "1.0"
 k256 = {git="https://github.com/risc0/RustCrypto-elliptic-curves", features=["serde"]}
 rand_core = "0.6.4"
 risc0-types = {path="../risc0-types"}
+reqwest = {version="0.12", features=["blocking", "json"]}

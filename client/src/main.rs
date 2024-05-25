@@ -6,8 +6,10 @@ use k256::{
 };
 use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
+use serde_json;
 use std::fs;
 use std::path::PathBuf;
+use reqwest::blocking::Client;
 
 #[derive(Parser)]
 pub struct Cli {
@@ -65,7 +67,12 @@ fn main() {
                 &government_public_key,
                 &public_identity,
             );
+            let receipt_serialized: Vec<u8> = serde_json::to_vec(&receipt).expect("Failed to serialize receipt");
+            let client: Client = Client::new();
+            let response = client.post("http://127.0.0.1:8080/submit_receipt").form(&receipt_serialized).send().expect("Failed to submit proof to server");
+            assert!(response.status().is_success());
         }
+
         Command::GenerateKeyPair {
             out_path,
             user_name,
