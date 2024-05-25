@@ -27,10 +27,7 @@ fn main() {
     payload.append(circuit_inputs.government_public_key.clone().as_mut());
 
     government_public_key
-        .verify(
-            &payload,
-            &circuit_inputs.public_identity,
-        )
+        .verify(&payload, &circuit_inputs.public_identity)
         .expect("Failed to verify public identity");
 
     let output: CircuitOutputs = CircuitOutputs {
