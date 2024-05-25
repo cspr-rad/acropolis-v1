@@ -100,7 +100,7 @@ fn generate_proof() {
     );
     let public_identity: Signature = government_signing_key.sign(&payload);
     let choice: String = "42".to_string();
-    let proof = prove(
+    prove(
         &choice,
         &signing_key,
         government_signing_key.verifying_key(),
