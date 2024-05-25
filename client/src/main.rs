@@ -67,9 +67,8 @@ fn main() {
                 &government_public_key,
                 &public_identity,
             );
-            let receipt_serialized: Vec<u8> = serde_json::to_vec(&receipt).expect("Failed to serialize receipt");
             let client: Client = Client::new();
-            let response = client.post("http://127.0.0.1:8080/submit_receipt").form(&receipt_serialized).send().expect("Failed to submit proof to server");
+            let response = client.post("http://127.0.0.1:8080/submit_receipt").json(&receipt).send().expect("Failed to submit proof to server");
             assert!(response.status().is_success());
         }
 
