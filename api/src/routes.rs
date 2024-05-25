@@ -5,15 +5,12 @@ use axum::{extract::State, http::StatusCode, routing::get, routing::post, Json, 
 // Router configuring all accessible API endpoints
 pub fn app_router() -> Router<StateType> {
     let mut router = Router::new();
-
     // Add default endpoints
     router = router
         .route("/ping", get(ping))
         .route("/submit_receipt", post(submit_receipt));
-
     // add 404 error handler
     router = router.fallback(handler_404);
-
     router
 }
 

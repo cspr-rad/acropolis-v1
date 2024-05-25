@@ -22,9 +22,13 @@ fn main() {
             &circuit_inputs.session_signature,
         )
         .expect("Failed to verify session signature");
+
+    let mut payload: Vec<u8> = circuit_inputs.user_public_key.clone();
+    payload.append(circuit_inputs.government_public_key.clone().as_mut());
+
     government_public_key
         .verify(
-            &circuit_inputs.user_public_key,
+            &payload,
             &circuit_inputs.public_identity,
         )
         .expect("Failed to verify public identity");

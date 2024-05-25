@@ -10,7 +10,6 @@ pub type StateType = Arc<Mutex<AppState>>;
 
 extern crate alloc;
 use alloc::collections::BTreeMap;
-
 type PublicIdentity = Vec<u8>;
 type GovernmentPublicKey = VerifyingKey;
 
@@ -84,7 +83,6 @@ impl AppState {
         run(Cli {
             command: create_user_election_two_command,
         });
-
         for username in usernames {
             // create current user for election 1
             let create_user_election_one_command = Command::GenerateKeyPair {
