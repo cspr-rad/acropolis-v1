@@ -9,25 +9,26 @@ use risc0_types::CircuitOutputs;
 use risc0_zkvm::Receipt;
 
 #[derive(Default, Clone)]
-struct MockBlockChainState {
-    elections: Vec<Election>,
+pub struct MockBlockChainState {
+    pub elections: Vec<Election>,
 }
 
 #[derive(Clone)]
-struct Election {
-    gov_key: VerifyingKey,
-    gov_sigs: Vec<Signature>,
-    options: Vec<String>,
+pub struct Election {
+    pub gov_key: VerifyingKey,
+    pub gov_sigs: Vec<Signature>,
+    pub options: Vec<String>,
     // receipt journal contains all info about the vote e.g. option, government identity, ...
-    receipts: Vec<Receipt>,
+    // we want to store this so that an external observer can verify all proofs independently
+    pub receipts: Vec<Receipt>,
     // this is where we store votes that have been verified
     // their government_public_key should match the gov_key of this Election
-    receipt_journals_decoded: Vec<CircuitOutputs>,
+    pub receipt_journals_decoded: Vec<CircuitOutputs>,
 }
 
 #[derive(Clone)]
 pub struct AppState {
-    state: MockBlockChainState,
+    pub state: MockBlockChainState,
 }
 
 impl AppState {

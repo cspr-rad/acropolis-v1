@@ -125,6 +125,7 @@ dependencies = [
  "dotenvy",
  "k256",
  "lazy_static",
+ "methods",
  "risc0-types",
  "risc0-zkvm",
  "serde",
