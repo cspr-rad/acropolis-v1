@@ -184,7 +184,7 @@ impl AppState {
         self.state
             .elections
             .iter_mut()
-            .filter(|election| election.gov_key == outputs.deserialized_government_public_key())
+            .filter(|election| election.gov_key == outputs.deserialized_government_public_key() && election.options.contains(&outputs.choice))
             .for_each(|election| {
                 election
                     .receipts
