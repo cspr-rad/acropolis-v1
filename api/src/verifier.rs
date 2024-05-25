@@ -1,10 +1,12 @@
-use risc0_types::CircuitOutputs;
 use crate::state::MockBlockChainState;
-use risc0_zkvm::Receipt;
 use methods::ACROPOLIS_ID;
+use risc0_types::CircuitOutputs;
+use risc0_zkvm::Receipt;
 
 pub fn verify_receipt(receipt: Receipt) -> CircuitOutputs {
-    receipt.verify(ACROPOLIS_ID).expect("Failed to verify proof");
+    receipt
+        .verify(ACROPOLIS_ID)
+        .expect("Failed to verify proof");
     receipt
         .journal
         .decode()
