@@ -1,4 +1,4 @@
-use crate::{verifier, CONFIG};
+use crate::{utils, verifier, CONFIG};
 use acropolis::{run, Cli, Command, VerifiedUser};
 use k256::ecdsa::{Signature, SigningKey, VerifyingKey};
 use risc0_types::CircuitOutputs;
@@ -6,6 +6,7 @@ use risc0_zkvm::Receipt;
 use std::collections::HashMap;
 use std::fs;
 use std::sync::{Arc, Mutex};
+
 pub type StateType = Arc<Mutex<AppState>>;
 
 extern crate alloc;
@@ -198,26 +199,22 @@ impl AppState {
 
     // pass the gov_key of the election to this function to fetch the metadata of all votes that have previously been verified
     // and are associated with that exact election
-    pub fn fetch_census_votes(&self, gov_key: VerifyingKey) -> Option<Vec<CircuitOutputs>> {
-        let verified_votes: Vec<CircuitOutputs> = self
+    pub fn fetch_census_votes(&self, gov_key: VerifyingKey) -> Vec<CircuitOutputs> {
+        let out: Vec<CircuitOutputs> = self
             .state
             .elections
             .iter()
             .filter(|election| election.gov_key == gov_key)
             .flat_map(|election| election.receipt_journals_decoded.values().cloned())
             .collect();
-        if verified_votes.is_empty() {
-            None
-        } else {
-            Some(verified_votes)
-        }
+        out
     }
 
-    pub fn get_all_gov_keys(&self) -> Vec<Vec<u8>> {
+    pub fn get_all_gov_keys(&self) -> Vec<String> {
         self.state
             .elections
             .iter()
-            .map(|election| election.gov_key.to_encoded_point(true).to_bytes().to_vec())
+            .map(|election| utils::to_hex_with_prefix(&election.gov_key))
             .collect()
     }
 }

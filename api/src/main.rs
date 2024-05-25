@@ -1,6 +1,7 @@
 mod routes;
 mod settings;
 mod state;
+mod utils;
 mod verifier;
 
 use crate::settings::Settings;

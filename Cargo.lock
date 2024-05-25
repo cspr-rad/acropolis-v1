@@ -125,6 +125,7 @@ dependencies = [
  "cargo-husky",
  "config",
  "dotenvy",
+ "hex",
  "k256",
  "lazy_static",
  "methods",

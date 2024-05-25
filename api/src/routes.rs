@@ -1,4 +1,4 @@
-use crate::{state::StateType, verifier::Receipt};
+use crate::{state::StateType, utils, verifier::Receipt};
 use axum::response::IntoResponse;
 use axum::{
     extract::{Path, State},
@@ -45,11 +45,33 @@ async fn fetch_elections(State(state): State<StateType>) -> impl IntoResponse {
 
 async fn fetch_votes(
     State(state): State<StateType>,
-    Path(gov_key): Path<Vec<u8>>,
+    Path(gov_key): Path<String>,
 ) -> impl IntoResponse {
     let state = state.lock().unwrap();
-    match k256::ecdsa::VerifyingKey::from_encoded_point(&EncodedPoint::from_bytes(gov_key).unwrap())
-    {
+
+    let gov_key_bytes = match utils::from_hex_with_prefix(&gov_key) {
+        Ok(bytes) => bytes,
+        Err(_) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                [(header::CONTENT_TYPE, "application/json")],
+                Json(json!({"error": "Invalid hex encoding"})),
+            )
+        }
+    };
+
+    let encoded_point = match EncodedPoint::from_bytes(&gov_key_bytes) {
+        Ok(point) => point,
+        Err(_) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                [(header::CONTENT_TYPE, "application/json")],
+                Json(json!({"error": "Invalid encoded point"})),
+            )
+        }
+    };
+
+    match k256::ecdsa::VerifyingKey::from_encoded_point(&encoded_point) {
         Ok(key) => (
             StatusCode::OK,
             [(header::CONTENT_TYPE, "application/json")],
@@ -58,7 +80,7 @@ async fn fetch_votes(
         Err(e) => (
             StatusCode::BAD_REQUEST,
             [(header::CONTENT_TYPE, "application/json")],
-            Json(json!({"Error": e.to_string()})),
+            Json(json!({"error": e.to_string()})),
         ),
     }
 }
