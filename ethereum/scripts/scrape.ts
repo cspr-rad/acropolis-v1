@@ -2,12 +2,6 @@ import fs from "fs";
 import { ethers } from "hardhat";
 import { VoteRecorder } from "../typechain-types";
 
-const voteScrapeDir = `${__dirname}/../vote_scrapes`;
-
-if (!fs.existsSync(voteScrapeDir)) {
-    fs.mkdirSync(voteScrapeDir)
-}
-
 const main = async (): Promise<void> => {
     const voteRecorderFactory = await ethers.getContractFactory("VoteRecorder");
     const voteRecorder = voteRecorderFactory.attach(
@@ -19,7 +13,9 @@ const main = async (): Promise<void> => {
     for (let i = 0n; i < votesTallied; i++) {
         voteData += `${await voteRecorder.getVoteReceipt(electionId, i)}\n`;
     }
-    fs.writeFileSync(`${voteScrapeDir}/${electionId}.txt`, voteData, "utf-8");
+    const scrapeFile = process.env["VOTE_SCRAPE_FILE"] as string;
+    console.log(`Scraped ${votesTallied.toString()} votes from election ${electionId} to ${scrapeFile}`)
+    fs.writeFileSync(scrapeFile, voteData, "utf-8");
 }
 
 main()

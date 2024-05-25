@@ -16,6 +16,3 @@ node_modules
 # Environment variables set by package.json scripts
 /PORT
 /CONTRACT_ADDRESS
-
-# Vote scrapes
-/vote_scrapes
