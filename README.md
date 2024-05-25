@@ -79,3 +79,24 @@ Risc0-groth16 currently only supports x86 architecture and therefore this featur
 
 ## Auditing the API
 Our API serves all `Elections` and their `Votes`. An external entity can utilize the functionality exposed by our `audit-utils` crate to verify all ZKPs (=votes) independently.
+
+## Simple CLI Voting
+First run the API and initialize Elections alongside with Accounts:
+```rust
+cargo run -p api
+```
+
+Open another terminal (or split tmux) and submit a vote:
+```bash
+cargo run -p acropolis --user-id-path ./election-1/user-1 --vote "dogs_and_cats"
+```
+
+Proving will take some time, once finished the API will serve the current state of the election.
+To query elections:
+```bash
+http://127.0.0.1:8080/fetch_elections
+```
+To query all votes (+ ZK proofs) of an election that have been verified by the API:
+```bash
+http://127.0.0.1:8080/fetch_votes/<election_hex>
+```
