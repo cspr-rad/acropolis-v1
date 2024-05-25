@@ -28,6 +28,23 @@ async fn main() -> AppResult<()> {
     let mut tui = Tui::new(terminal, events);
     tui.init()?;
 
+    let app_clone = Arc::clone(&app);
+    let _fetch_state = tokio::spawn(async move {
+        loop {
+            let result = reqwest::get("http://127.0.0.1:8080/fetch_election").await;
+            {
+                let mut app = app_clone.lock().unwrap();
+                match result {
+                    Ok(_) => println!("yay!"),
+                    Err(e) => {
+                        app.error = Some(format!(" Results may not be up to date, {e}"));
+                    }
+                }
+            }
+            tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+        }
+    });
+
     // Start the main loop.
     while app.lock().unwrap().running {
         // Render the user interface.

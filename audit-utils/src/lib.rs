@@ -9,7 +9,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
-fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
+pub fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
     let file = File::open(path).expect("Failed to read receipts file");
     let reader = BufReader::new(file);
     let mut result: Vec<Receipt> = Vec::new();
@@ -80,4 +80,8 @@ fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMap<St
 pub fn audit_data(path: PathBuf, gov_pub_key: String) {
     let receipts = parse_receipts_file(path);
     verify_receipt_vec(receipts, gov_pub_key);
+}
+
+pub fn serialize_receipt(receipt: Receipt) -> Vec<u8> {
+    bincode::serialize(&receipt).expect("Failed to serialize receipt")
 }
