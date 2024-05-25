@@ -59,11 +59,20 @@ pub fn run(cli: Cli) {
             )
             .expect("");
             let public_identity = Signature::from_slice(&verified_user.public_identity).expect("");
+            
+            // todo: generate an optimized groth16 wrapper proof and submit it to ETH
+            /*
+            
+                ...
+            */
+
+            // generate a regular risc0 proof and submit it to the API server
             let receipt = prover::prove(
                 &vote,
                 &user_secret_key,
                 &government_public_key,
                 &public_identity,
+                None
             );
             let client: Client = Client::new();
             let response = client

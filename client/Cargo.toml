@@ -7,7 +7,7 @@ edition = "2021"
 clap = { version = "4", features = ["derive"] }
 methods = { path = "../methods" }
 elliptic-curve = "0.13"
-risc0-zkvm = { version = "0.21" }
+risc0-zkvm = { version = "0.21", features = ["prove"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = "1.0"
 serde_json = "1.0"
@@ -15,3 +15,7 @@ k256 = {git="https://github.com/risc0/RustCrypto-elliptic-curves", features=["se
 rand_core = "0.6.4"
 risc0-types = {path="../risc0-types"}
 reqwest = {version="0.12", features=["blocking", "json"]}
+risc0-groth16 = { version = "0.21.0" }
+
+[features]
+groth16 = []
