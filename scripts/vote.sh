@@ -18,12 +18,12 @@ VOTE_DATA_FILE=$(realpath ${ARGS[3]})
 echo "Voting for $VOTE"
 echo "--------------------"
 start=`date +%s`
-cargo run -p acropolis -- vote --user-id-path $USER_ID_PATH --vote $VOTE --receipt-out-path $RECEIPT_FILE
+#cargo run -p acropolis -- vote --user-id-path $USER_ID_PATH --vote $VOTE --receipt-out-path $RECEIPT_FILE
 end=`date +%s`
 echo "--------------------"
 echo "...took $((end - start)) seconds"
 
-ELECTION_ID=$(cargo run -p acropolis -- extract-election-id --receipt-path $RECEIPT_FILE)
+ELECTION_ID=$(cargo run -p acropolis -- extract-election-id --receipt-path $RECEIPT_FILE | tr '\n' '')
 
 echo "Outputting GROTH16 proof to ${VOTE_DATA_FILE}"
 # cargo run -p acropolis --  $VOTE_DATA_FILE
