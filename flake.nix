@@ -72,6 +72,8 @@
             ];
 
             cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+            cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+
 
             buildInputs = with pkgs; [
               openssl.dev
@@ -115,6 +117,7 @@
             settings.formatter = { };
           };
           devShells.default = pkgs.mkShell {
+            LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib  ];
             RECURSION_SRC_PATH=recursionZkr;
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
