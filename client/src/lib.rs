@@ -59,12 +59,12 @@ pub fn run(cli: Cli) {
             )
             .expect("");
             let public_identity = Signature::from_slice(&verified_user.public_identity).expect("");
-            
+
             #[cfg(feature = "groth16")]
             let SUBMIT_TO_LAYER_ONE = "CALL_TO_GROTH_16";
             // todo: generate an optimized groth16 wrapper proof and submit it to ETH
             /*
-            
+
                 ...
             */
 
@@ -74,7 +74,7 @@ pub fn run(cli: Cli) {
                 &user_secret_key,
                 &government_public_key,
                 &public_identity,
-                None
+                None,
             );
             let client: Client = Client::new();
             let response = client
@@ -105,13 +105,13 @@ pub fn run(cli: Cli) {
             user_pkey_path,
         } => {
             let issuer_skey =
-                SigningKey::from_slice(&fs::read(issuer_id_path.join("secret_key")).expect("")).expect("");
+                SigningKey::from_slice(&fs::read(issuer_id_path.join("secret_key")).expect(""))
+                    .expect("");
 
             let mut payload = fs::read(&user_pkey_path).expect("");
             payload.append(&mut fs::read(issuer_id_path.join("public_key")).expect(""));
 
-            let public_identity: Signature =
-                issuer_skey.sign(&payload);
+            let public_identity: Signature = issuer_skey.sign(&payload);
 
             let mut public_identity_out_path = user_pkey_path.clone();
             public_identity_out_path.set_file_name("public_identity");
@@ -124,7 +124,7 @@ pub fn run(cli: Cli) {
                     .to_vec(),
                 public_identity: public_identity.to_bytes().to_vec(),
             };
-            
+
             fs::write(
                 public_identity_out_path,
                 serde_json::to_string(&verified_user).expect(""),

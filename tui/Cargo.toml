@@ -8,5 +8,6 @@ edition = "2021"
 crossterm = { version = "0.27.0", features = ["event-stream"] }
 futures = "0.3.30"
 ratatui = "0.26.0"
-reqwest = "0.12.4"
+reqwest = { version = "0.12.4", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.35.1", features = ["full"] }

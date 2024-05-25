@@ -103,8 +103,7 @@ impl AppState {
             });
             // create gov id for user for election 1
             let create_gov_id_election_one_command = Command::IssueIdentity {
-                issuer_id_path: path_to_election_1
-                    .join("admin".to_string()),
+                issuer_id_path: path_to_election_1.join("admin".to_string()),
                 user_pkey_path: path_to_election_1.join(username.clone()).join("public_key"),
             };
             run(Cli {
@@ -112,8 +111,7 @@ impl AppState {
             });
             // create gov id for user for election 2
             let create_gov_id_election_two_command = Command::IssueIdentity {
-                issuer_id_path: path_to_election_2
-                    .join("admin".to_string()),
+                issuer_id_path: path_to_election_2.join("admin".to_string()),
                 user_pkey_path: path_to_election_2.join(username.clone()).join("public_key"),
             };
             run(Cli {
