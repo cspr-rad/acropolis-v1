@@ -23,12 +23,8 @@ pub fn prove(
         .to_encoded_point(true)
         .to_bytes()
         .to_vec();
-    let unique_session_signature: Signature = user_secret_key.sign(
-        &government_public_key
-            .to_encoded_point(true)
-            .to_bytes()
-            .to_vec(),
-    );
+    let unique_session_signature: Signature =
+        user_secret_key.sign(&government_public_key.to_encoded_point(true).to_bytes());
     let circuit_inputs: CircuitInputs = CircuitInputs {
         choice: choice.to_string(),
         user_public_key: user_public_key_serialized,
@@ -57,7 +53,7 @@ pub fn prove(
 }
 
 #[cfg(feature = "groth16")]
-pub fn prove_groth16(receipt: Receipt) -> Receipt {
+pub fn prove_groth16(receipt: &Receipt) -> Receipt {
     use risc0_groth16::docker::stark_to_snark;
     use risc0_zkvm::{
         get_prover_server, recursion::identity_p254, CompactReceipt, ExecutorEnv, InnerReceipt,
@@ -68,7 +64,7 @@ pub fn prove_groth16(receipt: Receipt) -> Receipt {
     let claim = receipt.get_claim().unwrap();
     let composite_receipt = receipt.inner.composite().unwrap();
     let succinct_receipt = prover.compress(composite_receipt).unwrap();
-    let journal = receipt.journal.bytes;
+    let journal = receipt.journal.bytes.clone();
     let ident_receipt = identity_p254(&succinct_receipt).unwrap();
     let seal_bytes = ident_receipt.get_seal_bytes();
     let seal = stark_to_snark(&seal_bytes).unwrap().to_vec();

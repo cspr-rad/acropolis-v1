@@ -7,6 +7,8 @@ use k256::{
 };
 use rand_core::OsRng;
 use reqwest::blocking::Client;
+use risc0_types::CircuitOutputs;
+use risc0_zkvm::Receipt;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -24,6 +26,8 @@ pub enum Command {
         user_id_path: PathBuf,
         #[arg(short, long)]
         vote: String,
+        #[arg(short, long)]
+        receipt_out_path: Option<PathBuf>,
     },
     GenerateKeyPair {
         #[arg(short, long)]
@@ -43,6 +47,16 @@ pub enum Command {
         #[arg(short, long)]
         gov_key_hex: String,
     },
+    #[cfg(feature = "groth16")]
+    Groth16Proof {
+        #[arg(short, long)]
+        receipt_path: PathBuf,
+        out_path: PathBuf,
+    },
+    ExtractElectionId {
+        #[arg(short, long)]
+        receipt_path: PathBuf,
+    },
 }
 
 #[derive(Serialize, Deserialize)]
@@ -53,7 +67,11 @@ pub struct VerifiedUser {
 
 pub fn run(cli: Cli) {
     match cli.command {
-        Command::Vote { user_id_path, vote } => {
+        Command::Vote {
+            user_id_path,
+            vote,
+            receipt_out_path,
+        } => {
             let user_secret_key =
                 SigningKey::from_slice(&fs::read(user_id_path.join("secret_key")).expect(""))
                     .expect("");
@@ -83,6 +101,12 @@ pub fn run(cli: Cli) {
                 &public_identity,
                 None,
             );
+
+            if let Some(receipt_out_path) = receipt_out_path {
+                let serialized_receipt = bincode::serialize(&receipt).expect("");
+                fs::write(receipt_out_path, serialized_receipt).expect("");
+            };
+
             let client: Client = Client::new();
             let response = client
                 .post("http://127.0.0.1:8080/submit_receipt")
@@ -144,6 +168,33 @@ pub fn run(cli: Cli) {
             gov_key_hex,
         } => {
             audit_data(audit_file_path, gov_key_hex);
+        }
+        #[cfg(feature = "groth16")]
+        Command::Groth16Proof {
+            receipt_path,
+            out_path,
+        } => {
+            let receipt_bytes = fs::read(receipt_path).expect("");
+            let receipt: Receipt = bincode::deserialize(&receipt_bytes).expect("");
+
+            let groth16_receipt = prover::prove_groth16(&receipt);
+            fs::write(
+                out_path,
+                format!(
+                    "0x{}",
+                    hex::encode(bincode::serialize(&groth16_receipt).expect(""))
+                ),
+            )
+            .expect("");
+        }
+        Command::ExtractElectionId { receipt_path } => {
+            let receipt_bytes = fs::read(receipt_path).expect("");
+            let receipt: Receipt = bincode::deserialize(&receipt_bytes).expect("");
+            let data: CircuitOutputs = receipt
+                .journal
+                .decode()
+                .expect("Failed to extract public journal from receipt");
+            println!("0x{}", hex::encode(data.government_public_key))
         }
     }
 }

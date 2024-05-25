@@ -7,8 +7,10 @@ name = "acropolis"
 version = "0.1.0"
 dependencies = [
  "audit-utils",
+ "bincode",
  "clap",
  "elliptic-curve",
+ "hex",
  "k256",
  "methods",
  "rand_core",
