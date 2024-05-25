@@ -62,6 +62,9 @@
               cargo-risczero
               rustup-mock
             ];
+
+            cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+
             buildInputs = with pkgs; [
               openssl.dev
             ] ++ lib.optionals stdenv.isDarwin [
@@ -79,15 +82,27 @@
                 ./rust-std-Cargo.lock
               ];
             };
-            preBuild = ''
-              # The vendored cargo sources will be placed into .cargo-home,
-              # however it seems that since the risc0_build crate
-              # calls cargo at build time in this directory cargo will be
-              # looking for .cargo
-              mkdir .cargo
-              mv .cargo-home/config.toml .cargo/config.toml
-              export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust;
-            '';
+            preBuild =
+              let
+                # see https://github.com/risc0/risc0/blob/v0.21.0/risc0/circuit/recursion/build.rs
+                sha256Hash = "3504a2542626acb974dea1ae5542c90c032c4ef42f230977f40f245442a1ec23";
+                recursionZkr = pkgs.fetchurl {
+                  name = "recursion_zkr.zip";
+                  url = "https://risc0-artifacts.s3.us-west-2.amazonaws.com/zkr/${sha256Hash}.zip";
+                  sha256 = "sha256:08zcl515890gyivhj8rgyi72q0qcr515bbm1vrsbkb164raa411m";
+                };
+              in
+
+              ''
+                # The vendored cargo sources will be placed into .cargo-home,
+                # however it seems that since the risc0_build crate
+                # calls cargo at build time in this directory cargo will be
+                # looking for .cargo
+                mkdir .cargo
+                mv .cargo-home/config.toml .cargo/config.toml
+                export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust
+                export RECURSION_SRC_PATH=${recursionZkr}
+              '';
           };
         in
         {
@@ -108,7 +123,7 @@
             packages = [
               inputs'.nixpkgs-r0vm.legacyPackages.r0vm
               pkgs.nodejs
-              inputs'.kurtosis.packages.kurtosis
+              #inputs'.kurtosis.packages.kurtosis
             ];
           };
           packages = {
