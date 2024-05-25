@@ -1,12 +1,11 @@
 use crate::{verifier, CONFIG};
-use k256::{ecdsa::{Signature, VerifyingKey, SigningKey}, EncodedPoint};
+use acropolis::{run, Cli, Command, VerifiedUser};
+use k256::ecdsa::{Signature, SigningKey, VerifyingKey};
 use risc0_types::CircuitOutputs;
 use risc0_zkvm::Receipt;
 use std::collections::HashMap;
 use std::fs;
 use std::sync::{Arc, Mutex};
-use acropolis::{Cli, run, Command, VerifiedUser};
-use std::path::PathBuf;
 pub type StateType = Arc<Mutex<AppState>>;
 
 extern crate alloc;
@@ -51,8 +50,10 @@ impl AppState {
             fs::remove_dir_all(&path_to_election_2).expect("Failed to delete resources");
         }
 
-        fs::create_dir_all(&path_to_election_1).expect("Failed to create resources directory for election 1");
-        fs::create_dir_all(&path_to_election_2).expect("Failed to create resources directory for election 2");
+        fs::create_dir_all(&path_to_election_1)
+            .expect("Failed to create resources directory for election 1");
+        fs::create_dir_all(&path_to_election_2)
+            .expect("Failed to create resources directory for election 2");
 
         let mut election_1_gov_sigs: Vec<Signature> = Vec::new();
         let mut election_2_gov_sigs: Vec<Signature> = Vec::new();
@@ -62,68 +63,122 @@ impl AppState {
         // create 5 users for each election
         // create 1 government account for each election
         // authorize all 5 users for each election and register them
-        let usernames: Vec<String> = vec!["user-1".to_string(), "user-2".to_string(), "user-3".to_string(), "user-4".to_string(), "user-5".to_string()];
-        let create_user_election_one_command = Command::GenerateKeyPair { out_path: path_to_election_1.clone(), user_name: Some("admin".to_string()) };
-        run(Cli { command: create_user_election_one_command });
-        let create_user_election_two_command = Command::GenerateKeyPair { out_path: path_to_election_2.clone(), user_name: Some("admin".to_string()) };
-        run(Cli { command: create_user_election_two_command });
-    
-        for username in usernames{
+        let usernames: Vec<String> = vec![
+            "user-1".to_string(),
+            "user-2".to_string(),
+            "user-3".to_string(),
+            "user-4".to_string(),
+            "user-5".to_string(),
+        ];
+        let create_user_election_one_command = Command::GenerateKeyPair {
+            out_path: path_to_election_1.clone(),
+            user_name: Some("admin".to_string()),
+        };
+        run(Cli {
+            command: create_user_election_one_command,
+        });
+        let create_user_election_two_command = Command::GenerateKeyPair {
+            out_path: path_to_election_2.clone(),
+            user_name: Some("admin".to_string()),
+        };
+        run(Cli {
+            command: create_user_election_two_command,
+        });
+
+        for username in usernames {
             // create current user for election 1
-            let create_user_election_one_command = Command::GenerateKeyPair { out_path: path_to_election_1.clone(), user_name: Some(username.clone()) };
-            run(Cli { command: create_user_election_one_command });
+            let create_user_election_one_command = Command::GenerateKeyPair {
+                out_path: path_to_election_1.clone(),
+                user_name: Some(username.clone()),
+            };
+            run(Cli {
+                command: create_user_election_one_command,
+            });
             // create current user for election 2
-            let create_user_election_two_command = Command::GenerateKeyPair { out_path: path_to_election_2.clone(), user_name: Some(username.clone()) };
-            run(Cli { command: create_user_election_two_command });
+            let create_user_election_two_command = Command::GenerateKeyPair {
+                out_path: path_to_election_2.clone(),
+                user_name: Some(username.clone()),
+            };
+            run(Cli {
+                command: create_user_election_two_command,
+            });
             // create gov id for user for election 1
-            let create_gov_id_election_one_command = Command::IssueIdentity { issuer_skey_path: path_to_election_1.join("admin".to_string()).join("secret_key"), user_pkey_path: path_to_election_1.join(username.clone()).join("public_key") };
-            run(Cli {command: create_gov_id_election_one_command});
+            let create_gov_id_election_one_command = Command::IssueIdentity {
+                issuer_skey_path: path_to_election_1
+                    .join("admin".to_string())
+                    .join("secret_key"),
+                user_pkey_path: path_to_election_1.join(username.clone()).join("public_key"),
+            };
+            run(Cli {
+                command: create_gov_id_election_one_command,
+            });
             // create gov id for user for election 2
-            let create_gov_id_election_two_command = Command::IssueIdentity { issuer_skey_path: path_to_election_2.join("admin".to_string()).join("secret_key"), user_pkey_path: path_to_election_2.join(username.clone()).join("public_key") };
-            run(Cli {command: create_gov_id_election_two_command});
+            let create_gov_id_election_two_command = Command::IssueIdentity {
+                issuer_skey_path: path_to_election_2
+                    .join("admin".to_string())
+                    .join("secret_key"),
+                user_pkey_path: path_to_election_2.join(username.clone()).join("public_key"),
+            };
+            run(Cli {
+                command: create_gov_id_election_two_command,
+            });
             // add public identity of user to election 1 vec
             let verified_user_e1: VerifiedUser = serde_json::from_str(
-                &fs::read_to_string(path_to_election_1.join(username.clone()).join("public_identity")).expect(""),
+                &fs::read_to_string(
+                    path_to_election_1
+                        .join(username.clone())
+                        .join("public_identity"),
+                )
+                .expect(""),
             )
             .expect("");
-            let public_identity_e1 = Signature::from_slice(&verified_user_e1.public_identity).expect("");
+            let public_identity_e1 =
+                Signature::from_slice(&verified_user_e1.public_identity).expect("");
             election_1_gov_sigs.push(public_identity_e1);
             // add public identity of user to election 2 vec
             let verified_user_e2: VerifiedUser = serde_json::from_str(
-                &fs::read_to_string(path_to_election_2.join(username.clone()).join("public_identity")).expect(""),
+                &fs::read_to_string(
+                    path_to_election_2
+                        .join(username.clone())
+                        .join("public_identity"),
+                )
+                .expect(""),
             )
             .expect("");
-            let public_identity_e2 = Signature::from_slice(&verified_user_e2.public_identity).expect("");
+            let public_identity_e2 =
+                Signature::from_slice(&verified_user_e2.public_identity).expect("");
             election_2_gov_sigs.push(public_identity_e2);
         }
-        let admin_election_1_public_key =
-        *SigningKey::from_slice(&fs::read(path_to_election_1.join("admin").join("secret_key")).expect(""))
-            .expect("").verifying_key();
+        let admin_election_1_public_key = *SigningKey::from_slice(
+            &fs::read(path_to_election_1.join("admin").join("secret_key")).expect(""),
+        )
+        .expect("")
+        .verifying_key();
 
-        let admin_election_2_public_key =
-        *SigningKey::from_slice(&fs::read(path_to_election_2.join("admin").join("secret_key")).expect(""))
-            .expect("").verifying_key();
+        let admin_election_2_public_key = *SigningKey::from_slice(
+            &fs::read(path_to_election_2.join("admin").join("secret_key")).expect(""),
+        )
+        .expect("")
+        .verifying_key();
 
         let elections: Vec<Election> = vec![
-            Election{
+            Election {
                 gov_key: admin_election_1_public_key,
                 gov_sigs: election_1_gov_sigs,
                 options: election_1_options,
                 receipts: HashMap::new(),
-                receipt_journals_decoded: BTreeMap::new()
+                receipt_journals_decoded: BTreeMap::new(),
             },
-            Election{
+            Election {
                 gov_key: admin_election_2_public_key,
                 gov_sigs: election_2_gov_sigs,
                 options: election_2_options,
                 receipts: HashMap::new(),
-                receipt_journals_decoded: BTreeMap::new()
-            }
+                receipt_journals_decoded: BTreeMap::new(),
+            },
         ];
         Arc::new(Mutex::new(AppState {
-            state: MockBlockChainState{
-                elections
-            },
+            state: MockBlockChainState { elections },
         }))
     }
 

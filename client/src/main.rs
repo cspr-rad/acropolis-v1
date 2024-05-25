@@ -1,7 +1,6 @@
 mod prover;
-use std::path::PathBuf;
 
-use acropolis::{run, Cli, Command};
+use acropolis::{run, Cli};
 use clap::Parser;
 fn main() {
     let cli = Cli::parse();

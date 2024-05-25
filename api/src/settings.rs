@@ -1,6 +1,5 @@
 use config::{Config as Configuration, Environment, File};
 use dotenvy::dotenv;
-use k256::ecdsa::Signature;
 use serde::{Deserialize, Serialize};
 use std::{
     fs::File as FsFile,
