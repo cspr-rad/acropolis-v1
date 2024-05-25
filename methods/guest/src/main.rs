@@ -18,7 +18,7 @@ fn main() {
 
     user_public_key
         .verify(
-            &circuit_inputs.government_public_key,
+            &choice.as_bytes().to_vec(),
             &circuit_inputs.session_signature,
         )
         .expect("Failed to verify session signature");
