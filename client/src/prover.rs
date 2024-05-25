@@ -121,7 +121,7 @@ fn optimize_groth16_proof() {
         &public_identity,
         None,
     );
-    let optimized_receipt = prove_groth16(receipt);
+    let optimized_receipt = prove_groth16(&receipt);
     println!(
         "Optimized Receipt size: {:?}",
         serde_json::to_vec(&optimized_receipt).unwrap().len()
