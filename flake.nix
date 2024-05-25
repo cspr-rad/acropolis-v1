@@ -74,7 +74,6 @@
             cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
             cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
 
-
             buildInputs = with pkgs; [
               openssl.dev
             ] ++ lib.optionals stdenv.isDarwin [
