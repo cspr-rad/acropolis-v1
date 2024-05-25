@@ -8,7 +8,7 @@ const main = async (): Promise<void> => {
         fs.readFileSync(`${__dirname}/../CONTRACT_ADDRESS`, 'utf8')
     ) as VoteRecorder;
     const electionId = process.env["ELECTION_ID"] as string;
-    const voteData = process.env["VOTE_DATA"] as string;
+    const voteData = fs.readFileSync(process.env["VOTE_DATA_FILE"] as string, 'utf8');
     await voteRecorder.vote(electionId, voteData);
     console.log(`${(await voteRecorder.getVotesTallied(electionId)).toString()} vote(s) cast`)
 }
