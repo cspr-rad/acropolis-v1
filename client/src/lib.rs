@@ -28,6 +28,9 @@ pub enum Command {
         vote: String,
         #[arg(short, long)]
         receipt_out_path: Option<PathBuf>,
+        #[cfg(feature = "groth16")]
+        #[cfg_attr(feature = "groth16", arg(short, long))]
+        groth16_receipt_out_path: Option<PathBuf>,
     },
     GenerateKeyPair {
         #[arg(short, long)]
@@ -72,6 +75,8 @@ pub fn run(cli: Cli) {
             user_id_path,
             vote,
             receipt_out_path,
+            #[cfg(feature = "groth16")]
+            groth16_receipt_out_path,
         } => {
             let user_secret_key =
                 SigningKey::from_slice(&fs::read(user_id_path.join("secret_key")).expect(""))
@@ -86,14 +91,6 @@ pub fn run(cli: Cli) {
             .expect("");
             let public_identity = Signature::from_slice(&verified_user.public_identity).expect("");
 
-            #[cfg(feature = "groth16")]
-            let SUBMIT_TO_LAYER_ONE = "CALL_TO_GROTH_16";
-            // todo: generate an optimized groth16 wrapper proof and submit it to ETH
-            /*
-
-                ...
-            */
-
             // generate a regular risc0 proof and submit it to the API server
             let receipt = prover::prove(
                 &vote,
@@ -101,6 +98,19 @@ pub fn run(cli: Cli) {
                 &government_public_key,
                 &public_identity,
             );
+
+            #[cfg(feature = "groth16")]
+            if let Some(groth16_receipt_out_path) = groth16_receipt_out_path {
+                let groth16_receipt = prover::prove_groth16(&receipt);
+                fs::write(
+                    groth16_receipt_out_path,
+                    format!(
+                        "0x{}",
+                        hex::encode(bincode::serialize(&groth16_receipt).expect(""))
+                    ),
+                )
+                .expect("");
+            }
 
             if let Some(receipt_out_path) = receipt_out_path {
                 let serialized_receipt = bincode::serialize(&receipt).expect("");
@@ -162,7 +172,6 @@ pub fn run(cli: Cli) {
             )
             .expect("");
         }
-
         Command::Audit {
             audit_file_path,
             gov_key_hex,
