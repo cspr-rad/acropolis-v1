@@ -22,6 +22,8 @@
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     crane.url = "github:ipetkov/crane";
     crane.inputs.nixpkgs.follows = "nixpkgs";
+    kurtosis.url = "github:marijanp/kurtosis/nixify";
+    kurtosis.inputs.unstable.follows = "nixpkgs";
   };
 
   outputs = inputs@{ flake-parts, treefmt-nix, ... }:
@@ -50,6 +52,14 @@
             '';
           };
 
+          # see https://github.com/risc0/risc0/blob/v0.21.0/risc0/circuit/recursion/build.rs
+          sha256Hash = "3504a2542626acb974dea1ae5542c90c032c4ef42f230977f40f245442a1ec23";
+          recursionZkr = pkgs.fetchurl {
+            name = "recursion_zkr.zip";
+            url = "https://risc0-artifacts.s3.us-west-2.amazonaws.com/zkr/${sha256Hash}.zip";
+            sha256 = "sha256:08zcl515890gyivhj8rgyi72q0qcr515bbm1vrsbkb164raa411m";
+          };
+
           acropolisAttrs = rec {
             src = lib.cleanSourceWith {
               src = craneLib.path ./.;
@@ -60,6 +70,11 @@
               cargo-risczero
               rustup-mock
             ];
+
+            cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+            cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+
+
             buildInputs = with pkgs; [
               openssl.dev
             ] ++ lib.optionals stdenv.isDarwin [
@@ -77,15 +92,17 @@
                 ./rust-std-Cargo.lock
               ];
             };
-            preBuild = ''
-              # The vendored cargo sources will be placed into .cargo-home,
-              # however it seems that since the risc0_build crate
-              # calls cargo at build time in this directory cargo will be
-              # looking for .cargo
-              mkdir .cargo
-              mv .cargo-home/config.toml .cargo/config.toml
-              export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust;
-            '';
+            preBuild =
+              ''
+                # The vendored cargo sources will be placed into .cargo-home,
+                # however it seems that since the risc0_build crate
+                # calls cargo at build time in this directory cargo will be
+                # looking for .cargo
+                mkdir .cargo
+                mv .cargo-home/config.toml .cargo/config.toml
+                export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust
+                export RECURSION_SRC_PATH=${recursionZkr}
+              '';
           };
         in
         {
@@ -100,11 +117,15 @@
             settings.formatter = { };
           };
           devShells.default = pkgs.mkShell {
+            LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib ];
+            RECURSION_SRC_PATH = recursionZkr;
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
             packages = [
               inputs'.nixpkgs-r0vm.legacyPackages.r0vm
+              pkgs.nodejs
+              #inputs'.kurtosis.packages.kurtosis
             ];
           };
           packages = {
