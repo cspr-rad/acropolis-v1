@@ -117,8 +117,8 @@
             settings.formatter = { };
           };
           devShells.default = pkgs.mkShell {
-            LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib  ];
-            RECURSION_SRC_PATH=recursionZkr;
+            LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib ];
+            RECURSION_SRC_PATH = recursionZkr;
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
             RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
