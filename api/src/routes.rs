@@ -1,6 +1,7 @@
 use crate::{state::StateType, verifier::Receipt};
 use axum::response::IntoResponse;
-use axum::{extract::State, http::StatusCode, routing::get, routing::post, Json, Router};
+use axum::{extract::State, http::StatusCode, routing::get, routing::post, Json, Router, http::header};
+use serde_json::json;
 
 // Router configuring all accessible API endpoints
 pub fn app_router() -> Router<StateType> {
@@ -21,6 +22,15 @@ async fn submit_receipt(
     let mut state = state.lock().unwrap();
     state.process_receipt(body);
     (StatusCode::OK, "Receipt received")
+}
+
+async fn fetch_elections(State(state): State<StateType>) -> impl IntoResponse {
+    let mut state = state.lock().unwrap();
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "application/json")],
+        Json(json!(state.get_all_gov_keys()))
+    )
 }
 
 // Ping endpoint for debugging - TODO return DateTime of API server

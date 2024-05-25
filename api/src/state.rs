@@ -212,4 +212,8 @@ impl AppState {
             Some(verified_votes)
         }
     }
+
+    pub fn get_all_gov_keys(&self) -> Vec<Vec<u8>> {
+        self.state.elections.iter().map(|election| election.gov_key.to_encoded_point(true).to_bytes().to_vec()).collect()
+    }
 }
