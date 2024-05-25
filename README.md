@@ -10,60 +10,23 @@ _Each authorized user may only vote once per election._
 
 An eligible user may submit a vote for an election by generating a zero-knowledge proof where the public inputs are:
 
- - The `Public Key` associated with the election
- - The signed and salted user's public key
+ - The authority's `Public Key` associated with the election
+ - The salted signature of the user's public key produced by the authority
  - The user's vote selection (a string)
 
 The private inputs to the zero-knowledge proof are:
 
+ - The user's `Public Key`
  - A signature of the user's vote selection
 
 ## How It Works Exactly
 
-We utilize a Risc0 guest program (circuit) to prove that a user possesses a `Private Key` with a corresponding `Public Key` that has been signed by an authority.
-The user must sign the vote selection and the circuit will verify that "session `Signature`", as well as the government issued identity (which is also a `Signature`).
+We utilize a risc0 guest program (circuit) to construct the proof.
 
-Therefore the workload that's handled inside the ZKVM is the verification of 2 `Signatures` for each proof of identity. The only information that is revealed is that a user possess a `Private Key` that corresponds to a `Public Key` that has been signed by the authority. The cryptographic identity of the user is not revealed to the public.
+The risc0 guest program performs the following:
 
-## The Risc0 circuit
-
-The heart of this cryptographic protocol is the Risc0 circuit that takes the autorized `Public Key` as a secret input and the government issued identity (`Signature`) as a public input.
-
-```rust
-    let circuit_inputs: CircuitInputs = env::read();
-    let choice: String = circuit_inputs.choice;
-    let user_public_key: VerifyingKey = VerifyingKey::from_encoded_point(
-        ...
-    )
-    .unwrap();
-    let government_public_key: VerifyingKey = VerifyingKey::from_encoded_point(
-        ...
-    )
-    .unwrap();
-
-    user_public_key
-        .verify(
-            &circuit_inputs.government_public_key,
-            &circuit_inputs.session_signature,
-        )
-        .expect("Failed to verify session signature");
-
-    ...
-
-    government_public_key
-        .verify(
-            &payload,
-            &circuit_inputs.public_identity,
-        )
-        .expect("Failed to verify public identity");
-
-    let output: CircuitOutputs = CircuitOutputs {
-        choice: choice,
-        government_public_key: circuit_inputs.government_public_key,
-        public_identity: circuit_inputs.public_identity,
-    };
-    env::commit(&output);
-```
+ 1. Validates, using the _authority's_ `Public Key`, the signature of the user's public key concatenated with the authority's `Public Key`
+ 2. Validates, using the _user's_ `Public Key`, the signature of the user's vote selection
 
 ## The Client
 
@@ -90,26 +53,33 @@ The Client crate has a `groth16` feature that indicates whether to submit a proo
 Risc0-groth16 currently only supports x86 architecture and therefore this feature may not be enabled when running unsupported architecture.
 
 ## Auditing the API
+
 Our API serves all `Elections` and their `Votes`. An external entity can utilize the functionality exposed by our `audit-utils` crate to verify all ZKPs (=votes) independently.
 
 ## Simple CLI Voting
+
 First run the API and initialize Elections alongside with Accounts:
-```rust
+
+```bash
 cargo run -p api
 ```
 
 Open another terminal (or split tmux) and submit a vote:
+
 ```bash
-cargo run -p acropolis --user-id-path ./election-1/user-1 --vote "dogs_and_cats"
+cargo run -p acropolis -- --user-id-path ./election-1/user-1 --vote "dogs_and_cats"
 ```
 
 Proving will take some time, once finished the API will serve the current state of the election.
 To query elections:
-```bash
+
+```
 http://127.0.0.1:8080/fetch_elections
 ```
+
 To query all votes (+ ZK proofs) of an election that have been verified by the API:
-```bash
+
+```
 http://127.0.0.1:8080/fetch_votes/<election_hex>
 ```
 
