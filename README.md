@@ -1,5 +1,7 @@
 # Acropolis - a ZKVM enabled voting mechanism
 
+![Demo with TUI and Ethereum Audit](https://github.com/cspr-rad/acropolis/blob/main/resources/demo-video.gif)
+
 ## Authorized Anonymous Voting
 
 Acropolis enables anonymous voting through `Signatures` over `Public Keys`. The cryptographic identity of each user is treated as a secret input and never revealed to the public. Only the `Signature` issued by an authority for a "KYC-ed" user, alongside with the corresponding `Public Key` (one `Public Key` per election that is owned by the authority) are published for each election. An election is defined as a cycle with a fixed set of options to choose from and authorized identities (=`Signatures` over `Public Keys`).

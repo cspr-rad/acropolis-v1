@@ -1,5 +1,5 @@
 use ratatui::widgets::ListState;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::error;
 
 /// Application result type.
@@ -10,7 +10,7 @@ pub struct App {
     pub running: bool,
     pub elections: Vec<String>,
     pub list_elections: ListState,
-    pub tally: HashMap<String, u64>,
+    pub tally: BTreeMap<String, u64>,
 }
 
 impl App {
@@ -22,7 +22,7 @@ impl App {
             running: true,
             elections: vec!["None".to_string()],
             list_elections,
-            tally: HashMap::new(),
+            tally: BTreeMap::new(),
         }
     }
 
