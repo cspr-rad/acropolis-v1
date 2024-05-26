@@ -101,6 +101,7 @@
                 # looking for .cargo
                 mkdir .cargo
                 mv .cargo-home/config.toml .cargo/config.toml
+                export LD_LIBRARY_PATH=${lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib ]}
                 export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust
                 export RECURSION_SRC_PATH=${recursionZkr}
               '';
