@@ -133,7 +133,6 @@
             ];
           };
           packages = {
-            hardhat = pkgs.callPackage ./hardhat { };
             acropolis-deps = craneLib.buildDepsOnly (acropolisAttrs // {
               pname = "acropolis";
             });
