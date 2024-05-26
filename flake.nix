@@ -74,6 +74,7 @@
             cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
             # We can't run groth16 related tests in a nix build because it requires docker
             #cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+            doCheck = false;
 
             buildInputs = with pkgs; [
               openssl.dev
@@ -121,15 +122,18 @@
             LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib ];
             RECURSION_SRC_PATH = recursionZkr;
             RISC0_RUST_SRC = "${rustToolchain}/lib/rustlib/src/rust";
-            RISC0_DEV_MODE = 1;
+            # Uncomment to enable dev mode
+            #RISC0_DEV_MODE = 1;
             inputsFrom = [ self'.packages.acropolis ];
             packages = [
               inputs'.nixpkgs-r0vm.legacyPackages.r0vm
               pkgs.nodejs
+              #self'.packages.hardhat
               #inputs'.kurtosis.packages.kurtosis
             ];
           };
           packages = {
+            hardhat = pkgs.callPackage ./hardhat { };
             acropolis-deps = craneLib.buildDepsOnly (acropolisAttrs // {
               pname = "acropolis";
             });
