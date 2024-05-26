@@ -63,7 +63,7 @@ fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMap<St
                 }
             }
             Err(_) => {
-                eprintln!("Invalid proof: {:?}", &journal)
+                eprintln!("Invalid proof")
             }
         }
     }
