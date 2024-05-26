@@ -86,6 +86,21 @@ To query all votes (+ ZK proofs) of an election that have been verified by the A
 http://127.0.0.1:8080/fetch_votes/<election_hex>
 ```
 
+## Get an overview (TUI)
+
+Again, make sure the API is running fist:
+
+```bash
+cargo run -p api
+```
+
+Then run (in another shell):
+```bash
+cargo run -p tui
+```
+
+You'll get a window with a title that will show any errors (there won't be any if the API is running), a list of ongoing elections you can scroll through with arrow keys, and a bar graph showing the current results on teh right.
+
 ## Additional Contributions
 
 We hopefully improved the developer experience by submitting a PR that packages kurtosis with Nix: https://github.com/kurtosis-tech/kurtosis/pull/2461
