@@ -16,7 +16,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .margin(1)
         .constraints(
             [
-                Constraint::Percentage(15),  // Top section height
+                Constraint::Percentage(15), // Top section height
                 Constraint::Percentage(85), // Bottom section height
             ]
             .as_ref(),
