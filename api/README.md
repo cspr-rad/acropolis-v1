@@ -12,7 +12,7 @@ toml -> dotenv -> env variables
 [server]
 address = "0.0.0.0"
 port = 8080
-resources_path = "../clients"
+resources_path = "client"
 
 [log]
 level = "trace"
@@ -22,5 +22,6 @@ level = "trace"
 ```
 API_SERVER_ADDRESS="0.0.0.0"
 API_SERVER_PORT=8080
+API_SERVER_RESOURCES_PATH="client"
 API_LOG_LEVEL="trace"
 ```

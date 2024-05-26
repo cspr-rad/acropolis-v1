@@ -16,8 +16,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .margin(1)
         .constraints(
             [
-                Constraint::Percentage(5),  // Top section height
-                Constraint::Percentage(95), // Bottom section height
+                Constraint::Percentage(15),  // Top section height
+                Constraint::Percentage(85), // Bottom section height
             ]
             .as_ref(),
         )
@@ -26,7 +26,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
     // Render the welcome text
     let text = match &app.error {
         Some(e) => {
-            format!("Welcome to Acropolis! --- Press `Esc`, `Ctrl-C` or `q` to stop running. {e}")
+            format!("Welcome to Acropolis! --- Press `Esc`, `Ctrl-C` or `q` to stop running.\n{e}")
         }
         None => {
             "Welcome to Acropolis! --- Press `Esc`, `Ctrl-C` or `q` to stop running.".to_string()

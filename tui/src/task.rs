@@ -20,7 +20,7 @@ pub async fn fetch_and_update(app: Arc<Mutex<App>>) -> Result<(), Error> {
         }
 
         // Sleep for a defined interval before fetching data again
-        sleep(Duration::from_secs(5)).await;
+        sleep(Duration::from_secs(2)).await;
     }
 }
 
@@ -54,15 +54,15 @@ async fn fetch_data(app: Arc<Mutex<App>>) -> Result<(), Error> {
                     .await?
                     .json()
                     .await?;
-            let mut tally: std::collections::HashMap<String, u64> =
-                std::collections::HashMap::new();
+            let mut tally: std::collections::BTreeMap<String, u64> =
+                std::collections::BTreeMap::new();
 
             for vote in votes {
                 *tally.entry(vote.choice).or_insert(0) += 1;
             }
             tally
         } else {
-            std::collections::HashMap::new()
+            std::collections::BTreeMap::new()
         }
     };
 
