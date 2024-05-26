@@ -92,19 +92,6 @@ pub fn run(cli: Cli) {
                 &public_identity,
             );
 
-            #[cfg(feature = "groth16")]
-            if let Some(groth16_receipt_out_path) = groth16_receipt_out_path {
-                let groth16_receipt = prover::prove_groth16(&receipt);
-                fs::write(
-                    groth16_receipt_out_path,
-                    format!(
-                        "0x{}",
-                        hex::encode(bincode::serialize(&groth16_receipt).expect(""))
-                    ),
-                )
-                .expect("");
-            }
-
             if let Some(receipt_out_path) = receipt_out_path {
                 let serialized_receipt = bincode::serialize(&receipt).expect("");
                 fs::write(receipt_out_path, serialized_receipt).expect("");
@@ -117,6 +104,19 @@ pub fn run(cli: Cli) {
                 .send()
                 .expect("Failed to submit proof to server");
             assert!(response.status().is_success());
+
+            #[cfg(feature = "groth16")]
+            if let Some(groth16_receipt_out_path) = groth16_receipt_out_path {
+                let groth16_receipt = prover::prove_groth16(receipt);
+                fs::write(
+                    groth16_receipt_out_path,
+                    format!(
+                        "0x{}",
+                        hex::encode(bincode::serialize(&groth16_receipt).expect(""))
+                    ),
+                )
+                .expect("");
+            }
         }
 
         Command::GenerateKeyPair {
@@ -170,24 +170,6 @@ pub fn run(cli: Cli) {
             gov_key_hex,
         } => {
             audit_data(audit_file_path, gov_key_hex);
-        }
-        #[cfg(feature = "groth16")]
-        Command::Groth16Proof {
-            receipt_path,
-            out_path,
-        } => {
-            let receipt_bytes = fs::read(receipt_path).expect("");
-            let receipt: Receipt = bincode::deserialize(&receipt_bytes).expect("");
-
-            let groth16_receipt = prover::prove_groth16(&receipt);
-            fs::write(
-                out_path,
-                format!(
-                    "0x{}",
-                    hex::encode(bincode::serialize(&groth16_receipt).expect(""))
-                ),
-            )
-            .expect("");
         }
         Command::ExtractElectionId { receipt_path } => {
             let receipt_bytes = fs::read(receipt_path).expect("");
