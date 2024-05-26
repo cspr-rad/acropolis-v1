@@ -57,6 +57,7 @@ Risc0-groth16 currently only supports x86 architecture and therefore this featur
 ## Auditing the API
 
 Our API serves all `Elections` and their `Votes`. An external entity can utilize the functionality exposed by our `audit-utils` crate to verify all ZKPs (=votes) independently.
+The client exposes an `audit` endpoint that can be used to verify a set of votes. We scrape the votes the Smart Contract and dump them to a file that is fully auditable. The audit will evaluate all votes, verify all Zero Knowledge Proofs, flag malicious voters and output legitimate election results.
 
 ## Simple CLI Voting
 
