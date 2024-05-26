@@ -72,8 +72,9 @@
             ];
 
             cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
-            cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
 
+            # We can't run groth16 related tests in a nix build because it requires docker
+            #cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
 
             buildInputs = with pkgs; [
               openssl.dev
