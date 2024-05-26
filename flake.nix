@@ -72,7 +72,8 @@
             ];
 
             cargoExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
-            cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
+            # We can't run groth16 related tests in a nix build because it requires docker
+            #cargoTestExtraArgs = lib.optionalString (!pkgs.stdenv.isDarwin) "--features groth16";
 
             buildInputs = with pkgs; [
               openssl.dev
@@ -99,6 +100,7 @@
                 # looking for .cargo
                 mkdir .cargo
                 mv .cargo-home/config.toml .cargo/config.toml
+                export LD_LIBRARY_PATH=${lib.makeLibraryPath [ pkgs.openssl pkgs.stdenv.cc.cc.lib ]}
                 export RISC0_RUST_SRC=${rustToolchain}/lib/rustlib/src/rust
                 export RECURSION_SRC_PATH=${recursionZkr}
               '';
