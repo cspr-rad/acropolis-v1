@@ -13,4 +13,5 @@ echo "Scraping votes from Ethereum for election $ELECTION_ID"
 (cd $SCRIPT_DIR/../ethereum;
  ELECTION_ID=$ELECTION_ID VOTE_SCRAPE_FILE=$VOTE_SCRAPE_FILE npm run scrape)
 
-cat $VOTE_SCRAPE_FILE
+echo "Auditing votes"
+cargo run -p acropolis -- audit --gov-key-hex $ELECTION_ID --audit-file-path $VOTE_SCRAPE_FILE

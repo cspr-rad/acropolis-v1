@@ -16,6 +16,7 @@ pub fn parse_receipts_file(path: PathBuf) -> Vec<Receipt> {
     for line in reader.lines() {
         match line {
             Ok(hex_encoded_receipt) => {
+                let hex_encoded_receipt = hex_encoded_receipt.strip_prefix("0x").unwrap_or(&hex_encoded_receipt);
                 let receipt_bytes: Vec<u8> =
                     hex::decode(hex_encoded_receipt).expect("Failed to decode receipt hex");
                 let receipt: Receipt =
@@ -35,9 +36,10 @@ fn verify_receipt_vec(receipts: Vec<Receipt>, gov_pub_key: String) -> HashMap<St
     let mut valid_votes: Vec<CircuitOutputs> = Vec::new();
     for receipt in receipts {
         let journal: CircuitOutputs = receipt.journal.decode().expect("Failed to decode journal");
-        let journal_gov_pub: String = hex::encode(&journal.government_public_key);
+        let journal_gov_pub: String = format!("0x{}", hex::encode(&journal.government_public_key));
         let voter_identity: Signature = journal.public_identity;
         if journal_gov_pub != gov_pub_key {
+            eprintln!("Expected gov key: {}, got: {}", &gov_pub_key, &journal_gov_pub);
             continue;
         };
         if identities.contains(&voter_identity) {
