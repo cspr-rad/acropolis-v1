@@ -66,7 +66,7 @@ pub fn run(cli: Cli) {
             )
             .expect("");
             let public_identity = Signature::from_slice(&verified_user.public_identity).expect("");
-            
+
             #[cfg(feature = "groth16")]
             let SUBMIT_TO_LAYER_ONE = "CALL_TO_GROTH_16";
             // todo: generate an optimized groth16 wrapper proof and submit it to ETH

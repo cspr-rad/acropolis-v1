@@ -23,9 +23,7 @@ pub fn prove(
         .to_encoded_point(true)
         .to_bytes()
         .to_vec();
-    let unique_session_signature: Signature = user_secret_key.sign(
-        &choice.as_bytes().to_vec()
-    );
+    let unique_session_signature: Signature = user_secret_key.sign(&choice.as_bytes().to_vec());
     let circuit_inputs: CircuitInputs = CircuitInputs {
         choice: choice.to_string(),
         user_public_key: user_public_key_serialized,
