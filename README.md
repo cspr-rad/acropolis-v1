@@ -88,7 +88,7 @@ http://127.0.0.1:8080/fetch_votes/<election_hex>
 
 ## Get an overview (TUI)
 
-Again, make sure the API is running fist:
+Again, make sure the API is running first:
 
 ```bash
 cargo run -p api
