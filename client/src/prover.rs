@@ -42,6 +42,7 @@ pub fn prove(
 
 #[cfg(feature = "groth16")]
 pub fn prove_groth16(receipt: Receipt) -> Receipt {
+    let start_time = std::time::Instant::now();
     use risc0_groth16::docker::stark_to_snark;
     use risc0_zkvm::{
         get_prover_server, recursion::identity_p254, CompactReceipt, InnerReceipt, ProverOpts,
@@ -56,6 +57,10 @@ pub fn prove_groth16(receipt: Receipt) -> Receipt {
     let ident_receipt = identity_p254(&succinct_receipt).unwrap();
     let seal_bytes = ident_receipt.get_seal_bytes();
     let seal = stark_to_snark(&seal_bytes).unwrap().to_vec();
+    println!(
+        "Elapsed Time: {:?}",
+        std::time::Instant::now().duration_since(start_time)
+    );
     Receipt::new(
         InnerReceipt::Compact(CompactReceipt { seal, claim }),
         journal,
@@ -119,7 +124,7 @@ fn optimize_groth16_proof() {
         government_signing_key.verifying_key(),
         &public_identity,
     );
-    let optimized_receipt = prove_groth16(&receipt);
+    let optimized_receipt = prove_groth16(receipt);
     println!(
         "Optimized Receipt size: {:?}",
         serde_json::to_vec(&optimized_receipt).unwrap().len()
